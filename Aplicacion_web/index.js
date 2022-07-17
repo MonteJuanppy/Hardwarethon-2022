@@ -50,6 +50,11 @@ app.get('/', (req, res) => {                      //Pagina Inicio
   res.end();
 });
 
+app.get('/chart', (req, res) => {              //Pagina Grafico Prueba
+  res.render('chart');
+  res.end();
+});
+
 app.get('/contacts', (req, res) => {              //Pagina Contactos
     res.render('contact',{
     team: team,
