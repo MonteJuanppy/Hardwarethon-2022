@@ -24,10 +24,11 @@ client.on('connect', function() {                                   //Establecer
   console.log('connected'.green);
   client.subscribe('level_river', function() {                     //Suscribirse a topic
     client.on('message', function(topic, message, packet) {          //Mostrar mensaje recibido por consola
-      console.log('Recibido; ' + message + ' _Topic: ' + topic + ' _Packet: ' + packet);
+      console.log('Topic: '.red + topic + ' Message: '.green + message );
     });
   });
 });
+
 
 //Variables de pruebas
 var team = [
@@ -38,6 +39,8 @@ var team = [
     ];
 var tagline = "great team";
 
+var labels = ["8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"]
+var data = [3, 4, 2, 1, 8, 1, 2]
 
 //setting
 app.set('appName', 'Hardwarethon2022');     //Nombre de la app
@@ -55,7 +58,10 @@ app.get('/', (req, res) => {                      //Pagina Inicio
 });
 
 app.get('/chart', (req, res) => {              //Pagina Grafico Prueba
-  res.render('chart');
+  res.render('chart',{
+    labels: labels,
+    data: data
+  });
   res.end();
 });
 
