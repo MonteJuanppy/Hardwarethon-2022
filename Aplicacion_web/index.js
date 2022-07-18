@@ -8,26 +8,26 @@ const app = express();
 const server_port = 3000
 
 var options = {
-    port: 18709,
-   host: 'mqtt://driver.cloudmqtt.com',
-    clientId: 'Disaster Team',
-    username: 'hvdscpnh',
-    password: 'RT0dutQN19lg'
+  port: 18709,
+  host: 'mqtt://driver.cloudmqtt.com',
+//  clientId: 'Disaster_Team',
+  username: 'hvdscpnh',
+  password: 'RT0dutQN19lg'
 };                                      //Variable con almacena los parametros de conexion del servidor mqtt
 
-const mqttBroker = "mqttt://test.mosquitto.org"
-const client = mqtt.connect('mqttt://test.mosquitto.org')
+//const mqttBroker = "mqttt://test.mosquitto.org"
+//const client = mqtt.connect('mqttt://test.mosquitto.org')
 
-//const client = mqtt.connect('mqtt://driver.cloudmqtt.com', options)
+const client = mqtt.connect('mqtt://driver.cloudmqtt.com', options)
 
 client.on('connect', function() {                                   //Establecer conexion servidor mqtt
   console.log('connected'.green);
-  client.subscribe('hwthon', function() {                     //Suscribirse a topic
+  client.subscribe('level_river', function() {                     //Suscribirse a topic
     client.on('message', function(topic, message, packet) {          //Mostrar mensaje recibido por consola
-      console.log('Recibido; ' + message);
-      });
+      console.log('Recibido; ' + message + ' _Topic: ' + topic + ' _Packet: ' + packet);
     });
   });
+});
 
 //Variables de pruebas
 var team = [
