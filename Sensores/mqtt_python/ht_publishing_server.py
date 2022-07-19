@@ -10,8 +10,12 @@ port = 18709;
 #Almacenamiento del ID del dispositivo
 device_id = "disaster_team";
 
+type_device = "/river"
+point_ID = "/tempisque_1"
+parameter = "/levelWater"
+
 #Almacenamiento de topic MQTT
-topic = "level_river";
+topic = "alertDisaster" + type_device + point_ID + parameter;
 
 mqttc = mqtt.Client()
 # Connect

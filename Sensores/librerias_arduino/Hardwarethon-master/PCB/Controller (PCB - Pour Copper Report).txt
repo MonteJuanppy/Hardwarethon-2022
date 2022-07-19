@@ -1,0 +1,15 @@
+Pour Copper Report
+------------------
+
+Report Written:     Friday, June 28, 2019
+Project Path:       C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.prj
+Design Path:        C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.pcb
+Design Title:       
+Created:            24/06/2019 01:22:57 p.m.
+Last Saved:         28/06/2019 11:13:28 a.m.
+Editing Time:       883 min
+Units:              mm (precision 3)
+
+PL5.3 at 36.480,51.400 has no thermal spokes
+
+End Of Report.

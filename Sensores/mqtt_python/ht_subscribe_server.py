@@ -23,10 +23,10 @@ srv_pass = "RT0dutQN19lg";
 port = 18709;
 
 #Almacenamiento del ID del dispositivo
-device_id = "Desastres1";
+device_id = "disaster_team";
 
 #Almacenamiento de topic MQTT
-topic = "hwthon";
+topic = "alertDisaster/#";
 
 mqttc = mqtt.Client()
 # Assign event callbacks
@@ -51,7 +51,7 @@ mqttc.connect(server, port)
 mqttc.subscribe(topic, 0)
 
 # Publish a message
-mqttc.publish(topic, "sensor de nivel pruebas en python server")
+#mqttc.publish(topic, "sensor de nivel pruebas en python server")
 
 # Continue the network loop, exit when an error occurs
 rc = 0

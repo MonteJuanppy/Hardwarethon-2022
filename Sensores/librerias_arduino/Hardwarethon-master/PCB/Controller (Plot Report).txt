@@ -1,0 +1,306 @@
+Plot Report
+-----------
+
+Report Written:     Friday, June 28, 2019
+Project Path:       C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.prj
+Design Path:        C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.pcb
+Design Title:       
+Created:            24/06/2019 01:22:57 p.m.
+Last Saved:         28/06/2019 11:19:33 a.m.
+Editing Time:       889 min
+Units:              mm (precision 3)
+
+
+Device Settings
+===============
+
+
+Gerber Settings
+===============
+
+    Leading zero suppression.
+    G01 assumed throughout.
+    Line termination <*> <CR> <LF>.
+    3.5 format absolute inches.
+    Format commands defined in Gerber file.
+    Aperture table defined in Gerber file.
+
+
+Drill Settings
+==============
+
+    Excellon Format 1    Format 3.5 absolute in inches.
+    Leading zero suppression.
+
+PDF Settings
+============
+
+Combine Plots Yes
+Use Bookmarks Yes
+Component Details Yes
+Symbol Details Yes
+Link Net Names Yes
+View PDF Yes
+All Colors Black No
+Embed Fonts Yes
+
+
+
+Plots Output
+============
+
+    Plot Job: "C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.mop"
+
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Top Silkscreen.gbr
+
+    Layers:
+    ------------------
+    Top Silkscreen
+
+    D-Code Shape  (thou)
+    -----------------------
+    D16    Round 5.00
+    D18    Round 3.94
+    D19    Round 7.87
+    D70    Round 12.00
+    D71    Round 10.00
+    D21    Round 10.63
+    D22    Round 11.81
+    D23    Round 1.97
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Top Copper.gbr
+
+    Layers:
+    --------------
+    Top Copper
+
+    D-Code Shape  (thou)
+    ---------------------------------
+    D12    Round 78.74
+    D16    Round 5.00
+    D71    Round 10.00
+    D24    Round 165.35
+    D25    Round 106.30
+    D26    Rectangle 55.00 X 60.00
+    D27    Square 60.00
+    D28    Rectangle 25.59 X 33.46
+    D29    Round 118.11
+    D72    Rectangle 47.24 X 51.18
+    D73    Round 50.00
+    D74    Round 25.00
+    D75    Round 66.93
+    D76    Round 48.00
+    D77    Round 19.69
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Documentation.gbr
+
+    Layers:
+    -----------------
+    Documentation
+
+    D-Code Shape  (thou)
+    -----------------------
+    D18    Round 3.94
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Top Solder Mask.gbr
+
+    Layers:
+    -------------------
+    Top Solder Mask
+
+    D-Code Shape  (thou)
+    ---------------------------------
+    D78    Round 171.35
+    D79    Round 84.74
+    D80    Round 112.30
+    D81    Rectangle 61.00 X 66.00
+    D82    Square 66.00
+    D83    Rectangle 31.59 X 39.46
+    D84    Round 124.11
+    D85    Rectangle 53.24 X 57.18
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Top Paste Mask.gbr
+
+    Layers:
+    ------------------
+    Top Paste Mask
+
+    D-Code Shape  (thou)
+    ---------------------------------
+    D86    Rectangle 49.00 X 54.00
+    D87    Rectangle 19.59 X 27.46
+    D88    Rectangle 41.24 X 45.18
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Bottom Copper.gbr
+
+    Layers:
+    -----------------
+    Bottom Copper
+
+    D-Code Shape  (thou)
+    -----------------------
+    D12    Round 78.74
+    D16    Round 5.00
+    D71    Round 10.00
+    D24    Round 165.35
+    D25    Round 106.30
+    D27    Square 60.00
+    D29    Round 118.11
+    D73    Round 50.00
+    D74    Round 25.00
+    D75    Round 66.93
+    D76    Round 48.00
+    D77    Round 19.69
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Bottom Silkscreen.gbr
+
+    Layers:
+    ---------------------
+    Bottom Silkscreen
+
+    D-Code Shape  (thou)
+    -----------------------
+    D19    Round 7.87
+    D22    Round 11.81
+    D23    Round 1.97
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Bottom Solder Mask.gbr
+
+    Layers:
+    ----------------------
+    Bottom Solder Mask
+
+    D-Code Shape  (thou)
+    -----------------------
+    D78    Round 171.35
+    D79    Round 84.74
+    D80    Round 112.30
+    D82    Square 66.00
+    D84    Round 124.11
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Bottom Paste Mask.gbr
+
+    Layers:
+    ---------------------
+    Bottom Paste Mask
+
+    D-Code Shape  (thou)
+    -----------------------
+
+NC Drill Output
+===============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Drill Data - [Through Hole].drl
+
+    Output:
+    ---------------------------
+    Plated Round Drill Holes
+    Plated Slots
+
+    Tool  Size           Count   ID
+    --------------------------------------
+    T001  0.02400 inches 25    J
+    T002  0.03189 inches 10    I
+    T003  0.03500 inches 10    F
+    T004  0.04370 inches 28    C
+    T005  0.04921 inches 32    D
+    T006  0.05118 inches 4     G
+    T007  0.07165 inches 16    E
+    T008  0.15748 inches 2     H
+    --------------------------------------
+    Total                127
+    --------------------------------------
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Drill Data - [Through Hole] (Unplated).drl
+
+    Output:
+    -----------------------------
+    Unplated Round Drill Holes
+    Unplated Slots
+
+    Tool  Size Count   ID
+    ----------------------------
+    ----------------------------
+    Total      0
+    ----------------------------
+
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Drill Ident Drawing - [Through Hole].gbr
+
+    Layers:
+    ------------------
+    [Through Hole]
+
+
+Drill Ident Drawing
+===================
+
+    Drill Plated Size Shape ID
+    -----------------------------------
+    44    Y      100  Round C
+    49    Y      100  Round D
+    72    Y      100  Round E
+    35    Y      100  Round F
+    51    Y      100  Round G
+    157   Y      100  Round H
+    32    Y      100  Round I
+    24    Y      100  Round J
+
+    D-Code Shape  (thou)
+    -----------------------
+    D16    Round 5.00
+    D17    Round 100.00
+
+PDF Output
+==========
+
+    Layer
+    ---------------
+    Top Silkscreen
+
+
+Gerber Output
+=============
+
+C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller - Border Outline.gbr
+
+    Layers:
+    ------------------
+    Board Outlines
+
+    D-Code Shape  (thou)
+    -----------------------
+    D16    Round 5.00
+
+End Of Report.

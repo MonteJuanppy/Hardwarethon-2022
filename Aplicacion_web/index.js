@@ -22,7 +22,7 @@ const client = mqtt.connect('mqtt://driver.cloudmqtt.com', options)
 
 client.on('connect', function() {                                   //Establecer conexion servidor mqtt
   console.log('connected'.green);
-  client.subscribe('level_river', function() {                     //Suscribirse a topic
+  client.subscribe('alertDisaster/#', function() {                     //Suscribirse a topic
     client.on('message', function(topic, message, packet) {          //Mostrar mensaje recibido por consola
       console.log('Topic: '.red + topic + ' Message: '.green + message );
     });
@@ -32,6 +32,7 @@ client.on('connect', function() {                                   //Establecer
 
 //Variables de pruebas
 var team = [
+    { name: 'Betzabe', organization: "Telecomunicaciones", birth_year: 1996},
     { name: 'Daniel', organization: "electronics", birth_year: 1996},
     { name: 'Juan', organization: "electrical", birth_year: 1997},
     { name: 'Marcela', organization: "psychology", birth_year: 1992},
@@ -53,15 +54,15 @@ app.use(express.static(__dirname + '/public'));   //Indicamos directorio de pagi
 
 //rutas de las diferentes paginas a las que se accede en el servicio
 app.get('/', (req, res) => {                      //Pagina Inicio
-  res.render('index');
-  res.end();
-});
-
-app.get('/chart', (req, res) => {              //Pagina Grafico Prueba
-  res.render('chart',{
+  res.render('index',{
     labels: labels,
     data: data
   });
+  res.end();
+});
+
+app.get('/mqtt', (req, res) => {                      //Pagina Inicio
+  res.render('mqtt_test');
   res.end();
 });
 

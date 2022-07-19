@@ -1,0 +1,21 @@
+Forward Design Changes Report
+-----------------------------
+
+Report Written:     Thursday, June 27, 2019
+Project Path:       C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.prj
+Design Path:        C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.pcb
+Design Title:       
+Created:            24/06/2019 01:22:57 p.m.
+Last Saved:         27/06/2019 07:57:09 p.m.
+Editing Time:       802 min
+Units:              mm (precision 3)
+
+Ignoring instance U2 ("Logo_XYZ_Small") as it is defined for PCB only (no Schematic information).
+Ignoring instance U3 ("Logo_ImagineXYZ_0.5") as it is defined for PCB only (no Schematic information).
+Ignoring instance U4 ("Logo_XYZ_Small") as it is defined for PCB only (no Schematic information).
+Ignoring instance U5 ("Logo_ImagineXYZ_0.5") as it is defined for PCB only (no Schematic information).
+
+The designs are the same, so no design changes to forward.
+
+
+End Of Report.

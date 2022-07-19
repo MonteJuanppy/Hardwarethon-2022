@@ -1,0 +1,18 @@
+Back Annotation Renames Report
+------------------------------
+
+Report Written:     Wednesday, June 26, 2019
+Project Path:       C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.prj
+Design Path:        C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.pcb
+Design Title:       
+Created:            24/06/2019 01:22:57 p.m.
+Last Saved:         26/06/2019 05:41:23 p.m.
+Editing Time:       412 min
+Units:              mm (precision 3)
+
+Outstanding PCB renames awaiting back annotation to the Schematics design.
+
+Change Value on Component 'R17' - 'Value'.
+Change Value on Component 'R17' - 'Value'.
+
+End Of Report.

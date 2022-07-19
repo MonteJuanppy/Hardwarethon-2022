@@ -1,0 +1,18 @@
+Schematic and PCB Check Report
+------------------------------
+
+Report Written:     Friday, June 28, 2019
+Project Path:       C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.prj
+Design Path:        C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.pcb
+Design Title:       
+Created:            24/06/2019 01:22:57 p.m.
+Last Saved:         27/06/2019 10:35:36 p.m.
+Editing Time:       860 min
+Units:              mm (precision 3)
+
+
+Checking integrity of Schematic "C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.sch" with PCB "C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.pcb"
+==========================================================================================================================================================================================================================================================
+
+
+End Of Report.

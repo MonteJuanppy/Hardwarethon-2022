@@ -1,0 +1,17 @@
+Transfer from Schematic to PCB.
+-------------------------------
+
+Report Written:     Monday, June 24, 2019
+Design Path:        C:\users\bryanmtdt\My Documents\Trabajo\ImagineXYZ\HW_TEAM\Hardwarethon\2019\Controller\Controller.pcb
+Design Title:       
+Created:            24/06/2019 01:22:57 p.m.
+Last Saved:         24/06/2019 01:23:15 p.m.
+Editing Time:       0 min
+Units:              mm (precision 3)
+
+Schematic only component "LED1" (NeoPixel) ignored.
+Schematic only component "LED2" (NeoPixel) ignored.
+Schematic only component "LED3" (NeoPixel) ignored.
+Schematic only component "LED4" (NeoPixel) ignored.
+
+End Of Report.

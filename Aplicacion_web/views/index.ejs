@@ -1,24 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <%- include('partials/head'); %>
-    </head>
+  <head>
+    <%- include('partials/head'); %>
+  </head>
 
-    <body class="container">
-        <header>
-            <%- include('partials/header'); %>
-        </header>
+  <body>
+    <%- include('partials/header'); %>
+   
+    <div class="container-fluid">
+      <div class ="row">
+        <div class ="col-sm-12 col-md-2 col-lg-2 col-xl-2 py-2">
+          <div class="jumbotron">
+            <h2>Hardwarethon</h2>
+            <p>Prevencion de desastres Naturales</p>
+          </div>
+        </div>
 
-        <main>
-            <div class="jumbotron">
-                <h1>Hardwarethon 2022 is great</h1>
-                <p>Welcome to water level monitoring app test</p>
-            </div>
-        </main>
+        <div class ="col-sm-12 col-md-8 col-lg-8 col-xl-8 py-2">
+          <div class="card chart-container">
+            <canvas id="chart"></canvas>
+          </div>
+        </div>
 
-        <footer>
-            <%- include('partials/footer'); %>
-        </footer>
-    </body>
+        <div class ="col-sm-12 col-md-2 col-lg-2 col-xl-2 py-2">
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-success"><span class="cil-contrast btn-icon mr-2"></span> Alarma I</button>
+            <button type="button" class="btn btn-warning"><span class="cil-contrast btn-icon mr-2"></span> Alarma II</button>
+            <button type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span> Alarma III</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer>
+      <%- include('partials/footer'); %>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.2.0/dist/js/coreui.bundle.min.js" integrity="sha384-n0qOYeB4ohUPebL1M9qb/hfYkTp4lvnZM6U6phkRofqsMzK29IdkBJPegsyfj/r4" crossorigin="anonymous"></script>
+  </body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"> </script>
+<script>
+  const ctx = document.getElementById("chart").getContext('2d');
+  const myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      //labels: ["8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"],
+      labels: <%- JSON.stringify(labels); %>,
+      datasets: [{label: 'Levels',backgroundColor: 'rgba(161, 198, 247, 1)', borderColor: 'rgb(47, 128, 237)', 
+      //data: [3, 4, 2, 1, 2, 1, 2],
+      data: <%- JSON.stringify(data); %>,
+      }]
+    },
+    options: {
+      scales: { yAxes: [{ ticks: { beginAtZero: true, }}]}
+    },
+  });
+</script>
+
 </html>
 
