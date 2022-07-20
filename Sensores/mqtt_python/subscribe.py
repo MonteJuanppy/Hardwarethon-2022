@@ -6,8 +6,8 @@ def on_message(client, userdata, message):
 
 #mqttBroker ="mqtt.eclipseprojects.io"
 mqttBroker = "test.mosquitto.org"
-topic = "level_river"
-client = mqtt.Client("disaster86")
+topic = "level_river/#"
+client = mqtt.Client()
 client.connect(mqttBroker)
 
 client.loop_start()

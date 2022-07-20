@@ -2,6 +2,7 @@
 function startConnect() {
     // Generate a random client ID
     clientID = "clientID-" + parseInt(Math.random() * 100);
+    //clientID = "alertDisaster_1"
 
     // Fetch the hostname/IP address and port number from the form
     host = document.getElementById("host").value;
@@ -21,6 +22,8 @@ function startConnect() {
     // Connect the client, if successful, call onConnect function
     client.connect({ 
         onSuccess: onConnect,
+        userName : "hvdscpnh",
+        password : "RT0dutQN19lg"
     });
 }
 

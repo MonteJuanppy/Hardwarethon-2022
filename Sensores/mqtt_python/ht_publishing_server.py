@@ -26,4 +26,4 @@ while True:
     randNumber = uniform(10.0, 21.0)
     mqttc.publish(topic, randNumber)
     print("Just published " + str(randNumber) + " to topic: " + topic)
-    time.sleep(5)
+    time.sleep(10)

@@ -16,13 +16,22 @@
           </div>
         </div>
 
-        <div class ="col-sm-12 col-md-8 col-lg-8 col-xl-8 py-2">
-          <div class="card chart-container">
-            <canvas id="chart"></canvas>
-          </div>
+        <div class ="col-sm-12 col-md-9 col-lg-9 col-xl-9 py-2">
+          <div class="row align-items-start">
+            <div class="col">
+              <div class="card chart-container">
+                <canvas id="chart"></canvas>
+              </div>
+              <%= content.levelMsg %>
+            </div>
+            <div class="col">
+              <div id="map"></div>
+                <script src="map_jscript.js" type="text/javascript"></script>
+              </div>
+            </div>
         </div>
 
-        <div class ="col-sm-12 col-md-2 col-lg-2 col-xl-2 py-2">
+        <div class ="col-sm-12 col-md-1 col-lg-1 col-xl-1 py-2">
           <div class="d-grid gap-2">
             <button type="button" class="btn btn-success"><span class="cil-contrast btn-icon mr-2"></span> Alarma I</button>
             <button type="button" class="btn btn-warning"><span class="cil-contrast btn-icon mr-2"></span> Alarma II</button>
@@ -37,7 +46,6 @@
       <%- include('partials/footer'); %>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.2.0/dist/js/coreui.bundle.min.js" integrity="sha384-n0qOYeB4ohUPebL1M9qb/hfYkTp4lvnZM6U6phkRofqsMzK29IdkBJPegsyfj/r4" crossorigin="anonymous"></script>
   </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"> </script>
