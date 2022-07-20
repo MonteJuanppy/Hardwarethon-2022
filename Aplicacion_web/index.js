@@ -2,10 +2,12 @@
 const express = require('express');     //Servidor web
 const morgan = require('morgan');       //Mensajes de conexion del servidor
 const colors = require('colors');       //Color de mensajes de texto salida de consola
-const mqtt = require('mqtt')            //Servicio MQTT
+const mqtt = require('mqtt');            //Servicio MQTT
+
 
 const app = express();
 const server_port = 3000
+
 
 var options = {
   port: 18709,

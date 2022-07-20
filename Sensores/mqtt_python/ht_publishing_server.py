@@ -8,14 +8,13 @@ srv_pass = "RT0dutQN19lg";
 port = 18709;
 
 #Almacenamiento del ID del dispositivo
-device_id = "disaster_team";
-
-type_device = "/river"
+type_device = "/fieldSensor"
+device_ID = "001"
 point_ID = "/tempisque_1"
 parameter = "/levelWater"
 
 #Almacenamiento de topic MQTT
-topic = "alertDisaster" + type_device + point_ID + parameter;
+topic = "alertDisaster" + type_device + device_ID + point_ID + parameter;
 
 mqttc = mqtt.Client()
 # Connect
