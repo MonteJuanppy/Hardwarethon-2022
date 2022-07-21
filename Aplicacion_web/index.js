@@ -3,56 +3,61 @@ const express = require('express');     //Servidor web
 const morgan = require('morgan');       //Mensajes de conexion del servidor
 const colors = require('colors');       //Color de mensajes de texto salida de consola
 const mqtt = require('mqtt');            //Servicio MQTT
+const rtdb = require('rethinkdb');
 
 
-const app = express();
-const server_port = 3000
-
-
-var options = {
+var optionsMqttServer = {                     //Variable con almacena los parametros de conexion del servidor mqtt
   port: 18709,
   host: 'mqtt://driver.cloudmqtt.com',
   username: 'hvdscpnh',
   password: 'RT0dutQN19lg'
-};                                      //Variable con almacena los parametros de conexion del servidor mqtt
-var topicDisaster = "alertDisaster/#";
+};
+const clientMqtt = mqtt.connect('mqtt://driver.cloudmqtt.com', optionsMqttServer) //Instancia cliente mqtt
+var topicDisaster = "alertDisaster/#";                                            //Topic suscribir 
 
-var content = { levelMsg: "", tempMsg:"", moistureMsg:"", motionMsg: ""};
+var content = { levelMsg: "", tempMsg:"", moistureMsg:"", motionMsg: ""};         //Variables de prueba
+var connectionDataBase = null;                                                    // Variable para almacenar la conexion a la base de dato 
 
-//const mqttBroker = "mqttt://test.mosquitto.org"
-//const client = mqtt.connect('mqttt://test.mosquitto.org')
-
-const client = mqtt.connect('mqtt://driver.cloudmqtt.com', options)
-/*
-client.on('connect', function() {                                   //Establecer conexion servidor mqtt
-  console.log('connected'.green);
-  client.subscribe(topicDisaster, function() {                     //Suscribirse a topic
-    client.on('message', function(topic, message, packet) {          //Mostrar mensaje recibido por consola
-      console.log('Topic: '.red + topic + ' Message: '.green + message );
+clientMqtt.on('connect', function() {                                   //Establecer conexion servidor mqtt
+    console.log('connected mqtt server'.green);
+    
+    rtdb.connect( {host: 'localhost', port: 28015}, function(err, conn) {         //Establecemos la conexion con la base de datos
+    if (err) throw err;
+        console.log('Database connected'.green);
+        connectionDataBase = conn;                                                // Almacenamos la conexion
     });
-  });
-});
-*/
-client.on('connect', function(){
-  console.log('connecting mqtt server'.green);
-  client.on('message', function (topic, message, packet) {
-    console.log('Topic: '.red + topic + ' Message: '.green + message );
-    level(message);
-    if(topic === "alertDisaster/river/tempisque_1/levelWater") {
-      level(message);
-    }
-  });
+
+    clientMqtt.subscribe(topicDisaster, function(err) {                     //Suscribirse a topic
+        if (err) {
+            console.log('Error subscribe'.red);
+        }
+        else{
+            clientMqtt.on('message', function (topic, message, packet){                 //Recibimos topics
+                console.log('Topic: '.red + topic + ' Message: '.green + message );
+                if(topic === "alertDisaster/fieldSensor001/tempisque_1/levelWater") {   //Manejo de topic segun tema
+                    level(message);                                                     //Enviamos al dato del mensaje a una variable
+
+                    rtdb.db('sure_disaster').table('level_water_data').insert({         //Almacenamos en dato en la base datos
+                        "date": Date(),
+                        "topic": topic,
+                        "data": content.levelMsg
+                    }).run(connectionDataBase, function(err, result) {
+                        console.log("error>", err, result)                              //Mostramos el resultado por consola
+                        }
+                    );
+                }
+            });
+        }
+    });
 });
 
-client.subscribe(topicDisaster, function (err) {
-  if (err) {
-    console.log('Error subscribe'.red);
-    }
-});
-
-var level = (message) => {
+var level = (message) => {                    //almacenamos el dato en una variable
     content.levelMsg = message.toString();
 }
+
+const app = express();                        // Iniciamos en servidor express
+const server_port = 3000                      // Puerto del servidor
+
 
 //Variables de pruebas
 var team = [

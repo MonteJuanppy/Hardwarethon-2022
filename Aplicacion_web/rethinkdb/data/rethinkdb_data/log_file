@@ -80,3 +80,35 @@
 2022-07-20T16:20:41.772918773 2457.424953s info: Table 1cab8dde-c819-4fe2-9356-13366ebb116d: Added replica on this server.
 2022-07-20T16:20:41.772958316 2457.424992s info: Table 1cab8dde-c819-4fe2-9356-13366ebb116d: Starting a new Raft election for term 1.
 2022-07-20T16:20:41.850452389 2457.502486s info: Table 1cab8dde-c819-4fe2-9356-13366ebb116d: This server is Raft leader for term 1. Latest log index is 0.
+2022-07-21T13:21:36.122661949 0.416949s notice: Recursively removing directory /data/rethinkdb_data/tmp
+2022-07-21T13:21:36.180984671 0.475266s notice: Running rethinkdb 2.4.2~0bullseye (GCC 10.2.1)...
+2022-07-21T13:21:36.235410051 0.529692s notice: Running on Linux 5.15.0-41-generic x86_64
+2022-07-21T13:21:36.235527472 0.529808s notice: Loading data from directory /data/rethinkdb_data
+2022-07-21T13:21:36.384941401 0.679244s info: Automatically using cache size of 398 MB
+2022-07-21T13:21:36.387127383 0.681408s notice: Listening for intracluster connections on port 29015
+2022-07-21T13:21:36.489034324 0.783315s notice: Listening for client driver connections on port 28015
+2022-07-21T13:21:36.489229031 0.783510s notice: Listening for administrative HTTP connections on port 8080
+2022-07-21T13:21:36.489236170 0.783517s notice: Listening on cluster addresses: 127.0.0.1, 172.19.0.2
+2022-07-21T13:21:36.489418143 0.783699s notice: Listening on driver addresses: 127.0.0.1, 172.19.0.2
+2022-07-21T13:21:36.489425872 0.783707s notice: Listening on http addresses: 127.0.0.1, 172.19.0.2
+2022-07-21T13:21:36.489433120 0.783714s notice: Server ready, "c5df2c6c1456_dcn" efd2f881-7b7d-4a45-ae88-93e667bd48fb
+2022-07-21T13:21:37.627889036 1.922170s info: Table 1cab8dde-c819-4fe2-9356-13366ebb116d: Starting a new Raft election for term 2.
+2022-07-21T13:21:38.279171236 2.573452s info: Table 1cab8dde-c819-4fe2-9356-13366ebb116d: This server is Raft leader for term 2. Latest log index is 2.
+2022-07-21T13:22:25.784536605 50.078818s info: Table d2776dc8-9ba1-4950-8f67-8cac2c3a4f18: Starting a new Raft election for term 1.
+2022-07-21T13:22:25.784876568 50.079157s info: Table d2776dc8-9ba1-4950-8f67-8cac2c3a4f18: Added replica on this server.
+2022-07-21T13:22:25.827452391 50.121733s info: Table d2776dc8-9ba1-4950-8f67-8cac2c3a4f18: This server is Raft leader for term 1. Latest log index is 0.
+2022-07-21T13:56:58.796633583 2123.090915s notice: Removing file /data/rethinkdb_data/1cab8dde-c819-4fe2-9356-13366ebb116d
+2022-07-21T13:56:58.796763921 2123.091045s info: Table 1cab8dde-c819-4fe2-9356-13366ebb116d: Deleted the table.
+2022-07-21T13:57:08.398772278 2132.693054s info: Table 64d2977a-0c23-44eb-8300-4d25c3dbd2ec: Starting a new Raft election for term 1.
+2022-07-21T13:57:08.399129959 2132.693411s info: Table 64d2977a-0c23-44eb-8300-4d25c3dbd2ec: Added replica on this server.
+2022-07-21T13:57:08.467477160 2132.761758s info: Table 64d2977a-0c23-44eb-8300-4d25c3dbd2ec: This server is Raft leader for term 1. Latest log index is 0.
+2022-07-21T13:58:19.400678213 2203.694959s notice: Removing file /data/rethinkdb_data/64d2977a-0c23-44eb-8300-4d25c3dbd2ec
+2022-07-21T13:58:19.400701192 2203.694982s info: Table 64d2977a-0c23-44eb-8300-4d25c3dbd2ec: Deleted the table.
+2022-07-21T13:58:34.965623542 2219.259905s info: Table 71470c65-b27d-4daf-8fdb-87a561426593: Starting a new Raft election for term 1.
+2022-07-21T13:58:34.965847201 2219.260128s info: Table 71470c65-b27d-4daf-8fdb-87a561426593: Added replica on this server.
+2022-07-21T13:58:35.020079151 2219.314360s info: Table 71470c65-b27d-4daf-8fdb-87a561426593: This server is Raft leader for term 1. Latest log index is 0.
+2022-07-21T15:35:56.398071784 4403.559099s notice: Removing file /data/rethinkdb_data/71470c65-b27d-4daf-8fdb-87a561426593
+2022-07-21T15:35:56.398090031 4403.559117s info: Table 71470c65-b27d-4daf-8fdb-87a561426593: Deleted the table.
+2022-07-21T15:36:08.104697841 4415.265725s info: Table 98a87a41-ae70-4e66-ad09-a07af678f1b6: Starting a new Raft election for term 1.
+2022-07-21T15:36:08.104984813 4415.266012s info: Table 98a87a41-ae70-4e66-ad09-a07af678f1b6: Added replica on this server.
+2022-07-21T15:36:08.151796095 4415.312824s info: Table 98a87a41-ae70-4e66-ad09-a07af678f1b6: This server is Raft leader for term 1. Latest log index is 0.
