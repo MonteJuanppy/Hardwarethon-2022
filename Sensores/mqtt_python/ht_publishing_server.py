@@ -9,7 +9,7 @@ port = 18709;
 
 #Almacenamiento del ID del dispositivo
 type_device = "/fieldSensor"
-device_ID = "001"
+device_ID = "/001"
 point_ID = "/tempisque_1"
 parameter = "/levelWater"
 
