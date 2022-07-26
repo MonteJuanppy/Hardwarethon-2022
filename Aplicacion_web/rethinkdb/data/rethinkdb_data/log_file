@@ -31,3 +31,17 @@
 2022-07-22T15:58:46.557839094 29775.590983s info: Table be45c645-278c-43f6-a4ce-449c09ab2597: This server is Raft leader for term 1. Latest log index is 0.
 2022-07-22T16:04:51.266364607 30140.299509s notice: Removing file /data/rethinkdb_data/be45c645-278c-43f6-a4ce-449c09ab2597
 2022-07-22T16:04:51.266384549 30140.299529s info: Table be45c645-278c-43f6-a4ce-449c09ab2597: Deleted the table.
+2022-07-26T19:18:26.575563281 0.507924s notice: Recursively removing directory /data/rethinkdb_data/tmp
+2022-07-26T19:18:26.678789495 0.611144s notice: Running rethinkdb 2.4.2~0bullseye (GCC 10.2.1)...
+2022-07-26T19:18:26.799028581 0.731385s notice: Running on Linux 5.15.0-41-generic x86_64
+2022-07-26T19:18:26.799117824 0.731472s notice: Loading data from directory /data/rethinkdb_data
+2022-07-26T19:18:27.170223110 1.102578s info: Automatically using cache size of 222 MB
+2022-07-26T19:18:27.230229578 1.162584s notice: Listening for intracluster connections on port 29015
+2022-07-26T19:18:27.993995706 1.926350s notice: Listening for client driver connections on port 28015
+2022-07-26T19:18:27.994353693 1.926708s notice: Listening for administrative HTTP connections on port 8080
+2022-07-26T19:18:27.994368428 1.926723s notice: Listening on cluster addresses: 127.0.0.1, 172.19.0.2
+2022-07-26T19:18:27.994375119 1.926729s notice: Listening on driver addresses: 127.0.0.1, 172.19.0.2
+2022-07-26T19:18:27.994389903 1.926744s notice: Listening on http addresses: 127.0.0.1, 172.19.0.2
+2022-07-26T19:18:27.994405019 1.926759s notice: Server ready, "1d140593f84f_aul" 39e87888-7638-466e-a721-e98efacf9899
+2022-07-26T19:18:29.766255696 3.698610s info: Table c211b3ab-cf97-42b3-afe7-8068b5053d5a: Starting a new Raft election for term 2.
+2022-07-26T19:18:29.815388202 3.747743s info: Table c211b3ab-cf97-42b3-afe7-8068b5053d5a: This server is Raft leader for term 2. Latest log index is 3.

@@ -21,7 +21,6 @@
           <div class = "row">
             <div class="col"> 
               <div id="map"></div>
-              <script src="map_jscript.js" type="text/javascript"></script>
             </div>
           </div>
         
@@ -41,7 +40,6 @@
                   <a href="#" class="card-link">Another link</a>
                 </div>
               </div>
-              <%= content.levelMsg %>
             </div>
           </div>
         </div>
@@ -51,29 +49,6 @@
             <button id= alarmI type="button" class="btn btn-success"><span class="cil-contrast btn-icon mr-2"></span> Alarma I</button>
             <button id=alarmII type="button" class="btn btn-warning"><span class="cil-contrast btn-icon mr-2"></span> Alarma II</button>
             
-            <script src="socket.io/socket.io.js"> </script>
-              <script>
-                const socket = io();
-                let bottonAlarmI = document.getElementById("alarmI");
-                bottonAlarmI.addEventListener('click', async () => {
-                  const response = await fetch('/dis', {method: 'POST'});
-                  const data = await response.json();
-                  bottonAlarmI.textContent = data.count;
-                  socket.emit("alarmI:update");             // Emitimos evento hacia el cliente
-                });
-                let bottonAlarmII = document.getElementById("alarmII");
-                bottonAlarmII.addEventListener('click', async() => {
-                  socket.emit("alarmII:update");             // Emitimos evento hacia el cliente
-                });
-
-                socket.on("alarmI:update", data => {
-                  bottonAlarmI.textContent = data;
-                });
-                socket.on("db:update", data => {
-                  console.log("test", data)
-
-                });
-              </script>
 
             <button type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span> Alarma III</button>
           </div>
@@ -87,15 +62,18 @@
   </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"> </script>
+<script src="socket.io/socket.io.js"> </script>
+
 <script>
+
   const ctx = document.getElementById("chart").getContext('2d');
   const myChart = new Chart(ctx, {
     type: 'line',
     data: {
-      //labels: ["8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"],
+      //labels: [],
       labels: <%- JSON.stringify(labels); %>,
       datasets: [{label: 'Levels',backgroundColor: 'rgba(161, 198, 247, 1)', borderColor: 'rgb(47, 128, 237)', 
-      //data: [3, 4, 2, 1, 2, 1, 2],
+      //data: [],
       data: <%- JSON.stringify(data); %>,
       }]
     },
@@ -104,5 +82,105 @@
     },
   });
 
+  const socket = io();
+  let bottonAlarmI = document.getElementById("alarmI");
+  bottonAlarmI.addEventListener('click', async () => {
+      const response = await fetch('/dis', {method: 'POST'});
+      const data = await response.json();
+      bottonAlarmI.textContent = data.count;
+      socket.emit("alarmI:update");             // Emitimos evento hacia el cliente
+    });
+
+  let bottonAlarmII = document.getElementById("alarmII");
+  bottonAlarmII.addEventListener('click', async() => {
+      socket.emit("alarmII:update");             // Emitimos evento hacia el cliente
+    });
+
+  socket.on("alarmI:update", data => {
+    bottonAlarmI.textContent = data;
+    });
+
+  socket.on("db:update", function(data) {
+    console.log("mqttRes", data)
+    
+    if(myChart.data.labels.length != 15) { 
+      myChart.data.labels.push(data.time);  //Add time in x-asix
+      myChart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data.data); //Add temp in y-axis
+      });
+    }
+    else {
+      myChart.data.labels.shift(); //Remove first time data
+      myChart.data.labels.push(data.time); //Insert latest time data
+      myChart.data.datasets.forEach((dataset) => {
+        dataset.data.shift(); //Remove first temp data
+        dataset.data.push(data.data); //Insert latest temp data
+        });
+    }
+
+    myChart.update(); //Update the graph.
+  });
+  
+  
+  ////////////////////////////////////////////////////////////////////
+
+  var geojsonFeature = {
+    "type": "Feature",
+    "properties": {
+        "name": "Coors Field",
+        "amenity": "Baseball Stadium",
+        "popupContent": "This is where the Rockies play!"
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-85.5299, 10.4190]
+    }
+};
+
+  var map = L.map('map').setView([09.92, -84.07], 8);
+  var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+//	var marker = L.marker([10.6297, -85.4379]).addTo(map).bindPopup('<b>Hello world!</b><br />I am a popup.').openPopup();
+
+  var myLayer = L.geoJSON().addTo(map);
+  myLayer.addData(geojsonFeature);
+
+  socket.on("map:update", () => {
+    var polygon = L.polygon([
+      [10.06, -84.01],
+      [10.18, -84.06],
+      [10.10, -84.147]
+      ]).addTo(map).bindPopup('Zona de Riesgo');
+    });
+/*
+	var circle = L.circle([51.508, -0.11], {
+		color: 'red',
+		fillColor: '#f03',
+		fillOpacity: 0.5,
+		radius: 500
+	}).addTo(map).bindPopup('I am a circle.');
+
+
+	var popup = L.popup()
+		.setLatLng([10.4, -85.5])
+		.setContent('Standalone popup.')
+		.openOn(map);
+*/	
+var popup = L.popup();
+
+  function onMapClick(e) {
+    popup
+    .setLatLng(e.latlng)
+    .setContent('Tu has hecho clip en ' + e.latlng.toString())
+    .openOn(map);
+    console.log(e.latlng)
+    }
+
+  map.on('click', onMapClick);
+
  </script>
+
 </html>

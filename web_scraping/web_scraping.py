@@ -67,15 +67,15 @@ for row in records:
                         line = tr.text.replace('\n',';')
                         line = line[1:-1]
                         dato.append(line.split(";"))
-                        #print(line)
+                        print(line)
                     if numTable == 0:
                         print(datetime.now())
                         print(dato[1][0])
                     numTable += 1
 
-                    #columns = dato[0]
-                    #df= pd.DataFrame(dato[1:],columns=columns)
-                    #print(df)
+                    columns = dato[0]
+                    df= pd.DataFrame(dato[1:],columns=columns)
+                    print(df)
 
                     print("---------------------------------------------------------------")
         except:

@@ -21,7 +21,6 @@ var optionsMqttServer = {                     //Variable con almacena los parame
 const clientMqtt = mqtt.connect('mqtt://test.mosquitto.org')                      //Instancia cliente mqtt
 //const clientMqtt = mqtt.connect('mqtt://driver.cloudmqtt.com', optionsMqttServer)   //Instancia cliente mqtt
 let topicDisaster = "alertDisaster/#";                                              //Topic suscribir 
-let content = { levelMsg: "", tempMsg:"", moistureMsg:"", motionMsg: ""};           //Variables de prueba
 let connectionDataBase = null;                                                      // Variable para almacenar la conexion a la base de dato 
 let socketConnection = null;
 
@@ -34,18 +33,12 @@ let team = [
     { name: 'Pablo', organization: "agronomy", birth_year: 1986}
     ];
 let tagline = "great team";
-let labels = ["8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"]
-let data = [3, 4, 2, 1, 3, 1, 2]
+//let labels = ["8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"]
+//let data = [3, 4, 2, 1, 3, 1, 2]
 let count = 0;
 
 clientMqtt.on('connect', function() {                                               //Establecer conexion servidor mqtt
     console.log('connected mqtt server'.green);
-    
-//    r.connect( {host: 'localhost', port: 28015, db: 'sure_disaster'}, function(err, conn) {         //Establecemos la conexion con la base de datos
-//    if (err) throw err;
-//        console.log('Database connected'.green);
-//    connectionDataBase = conn;                                                    // Almacenamos la conexion
-//    });
 
     r.connect({host: 'localhost', port: 28015, db: 'sure_disaster'})                //Establece la conexion con la base datos
       .then(conn => {
@@ -67,31 +60,58 @@ clientMqtt.on('connect', function() {                                           
       console.log('Error subscribe'.red);
       }
       else{
+        console.log("topic Subscribe")
         clientMqtt.on('message', function (topic, message, packet){                 //Recibimos topics
         console.log('Topic: '.red + topic + ' Message: '.green + message );
+        
+          let today = new Date(); 
+          let dataString = {
+            date: today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear(), 
+            time: (today.getHours())+":"+(today.getMinutes()+":"+(today.getSeconds())),
+            data: message.toString(),
+            }
 
-        level(message);                                                     //Enviamos al dato del mensaje a una variable
-        r.table('level_water_data').insert({         //Almacenamos en dato en la base datos
-          "time": Date.now(),
-          "date": Date(),
-          "topic": topic,
-          "data": content.levelMsg
-        }).run(connectionDataBase, 
-         // function(err, result) { console.log("error>", err, result) }                             //Mostramos el resultado por consola
-          function(){
-            console.log("entra antes de socket")
-            socketConnection.emit("db:update",content.levelMsg , function(err){
-              console.log(err);
-          });
-        });
+          r.table('level_water_data').insert({         //Almacenamos en dato en la base datos
+            "time": dataString.time,
+            "date": dataString.date,
+            "topic": topic,
+            "data": dataString.data,
+            }).run(connectionDataBase, 
+              // function(err, result) { console.log("error>", err, result) }                             //Mostramos el resultado por consola
+              function(){
+                socketConnection.emit("db:update", dataString , function(err){
+                  console.log(err);
+                });
+              });
         });
       }
     });
 });
 
-var level = (message) => {                                                          //almacenamos el dato en una variable
-    content.levelMsg = message.toString();
-}
+
+io.on('connection', socket => {                               //Socket IO
+  console.log('Socket conected'.green);
+  socketConnection = socket;
+  
+  io.on('disconnect', socket => {
+    console.log('Socket disconnet'.red);
+    });
+  
+  socketConnection.on('alarmI:update', ()=>{
+    console.log('socket recibido'.yellow);
+    socketConnection.broadcast.emit('alarmI:update', count);
+    });
+  
+  socketConnection.on('alarmII:update', ()=>{
+    socketConnection.emit("map:update", function(err){
+      if (err){
+        console.log(err)
+      }else{
+        console.log('Map:update'.blue);
+        }
+    });
+   });
+});
 
 //setting
 app.set('appName', 'Hardwarethon2022');                       //Nombre de la app
@@ -101,31 +121,24 @@ app.set('views', __dirname + '/views');                       //Indicamos direct
 app.use(morgan('dev'));                                       //Configuracion de paquete que da colores a las salidas de consola
 app.use(express.static(__dirname + '/public'));               //Indicamos directorio de paginas estaticas
 
-io.on('connection', socket => {                               //Socket IO
-  console.log('Socket conected'.green);
-  socketConnection = socket;
-  io.on('disconnect', socket => {
-    console.log('Socket disconnet'.red);
-  });
-  socketConnection.on('alarmI:update', ()=>{
-    console.log('socket recibido'.yellow);
-   socketConnection.broadcast.emit('alarmI:update', count);
-  });
-  socketConnection.on('alarmII:update', ()=>{
-    console.log('socket botton 2'.blue);
-  });
-});
 
 //rutas de las diferentes paginas a las que se accede en el servicio
 app.get('/', async (req, res, next) => {                      //Pagina Inicio
 
-  var posts = await r.table('level_water_data').orderBy(r.desc('time')).limit(3).run(connectionDataBase)
+  let labels = [];
+  let data = [];
+
+  let posts = await r.table('level_water_data').orderBy(r.asc('time')).limit(10).run(connectionDataBase)
    .then(cursor => cursor.toArray());
+  
+  for (let reg of posts){
+    labels.push(reg.time);
+    data.push(reg.data);
+  }
 
   res.render('index',{
     labels: labels,
     data: data,
-    content: content,
     posts: posts
     },(err, html) => {
       res.send(html);
