@@ -14,6 +14,7 @@
         <div class ="col-sm-2 col-md-2 col-lg-2 col-xl-2 py-1">
           <div class="jumbotron">
             <h3>Hardwarethon</h3>
+
           </div>
         </div>
         
@@ -48,9 +49,7 @@
           <div class="d-grid gap-2">
             <button id= alarmI type="button" class="btn btn-success"><span class="cil-contrast btn-icon mr-2"></span> Alarma I</button>
             <button id=alarmII type="button" class="btn btn-warning"><span class="cil-contrast btn-icon mr-2"></span> Alarma II</button>
-            
-
-            <button type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span> Alarma III</button>
+            <button id=pushAlarm type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span> pushAlarm</button>
           </div>
         </div>
       </div>
@@ -65,7 +64,6 @@
 <script src="socket.io/socket.io.js"> </script>
 
 <script>
-
   const ctx = document.getElementById("chart").getContext('2d');
   const myChart = new Chart(ctx, {
     type: 'line',
@@ -96,6 +94,11 @@
       socket.emit("alarmII:update");             // Emitimos evento hacia el cliente
     });
 
+  let pushAlarm = document.getElementById("pushAlarm");
+  pushAlarm.addEventListener('click', async() => {
+      socket.emit("push:Alarm");             // Emitimos evento hacia el cliente
+    });
+  
   socket.on("alarmI:update", data => {
     bottonAlarmI.textContent = data;
     });
@@ -120,22 +123,10 @@
 
     myChart.update(); //Update the graph.
   });
-  
-  
+
   ////////////////////////////////////////////////////////////////////
 
-  var geojsonFeature = {
-    "type": "Feature",
-    "properties": {
-        "name": "Coors Field",
-        "amenity": "Baseball Stadium",
-        "popupContent": "This is where the Rockies play!"
-    },
-    "geometry": {
-        "type": "Point",
-        "coordinates": [-85.5299, 10.4190]
-    }
-};
+  var geoJsonImn_station = <%- JSON.stringify(imn); %>
 
   var map = L.map('map').setView([09.92, -84.07], 8);
   var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -143,10 +134,9 @@
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-//	var marker = L.marker([10.6297, -85.4379]).addTo(map).bindPopup('<b>Hello world!</b><br />I am a popup.').openPopup();
 
   var myLayer = L.geoJSON().addTo(map);
-  myLayer.addData(geojsonFeature);
+  myLayer.addData(geoJsonImn_station);
 
   socket.on("map:update", () => {
     var polygon = L.polygon([
@@ -181,6 +171,5 @@ var popup = L.popup();
 
   map.on('click', onMapClick);
 
- </script>
-
+</script>
 </html>

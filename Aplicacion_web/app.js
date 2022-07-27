@@ -21,6 +21,7 @@ var optionsMqttServer = {                     //Variable con almacena los parame
 const clientMqtt = mqtt.connect('mqtt://test.mosquitto.org')                      //Instancia cliente mqtt
 //const clientMqtt = mqtt.connect('mqtt://driver.cloudmqtt.com', optionsMqttServer)   //Instancia cliente mqtt
 let topicDisaster = "alertDisaster/#";                                              //Topic suscribir 
+let topicDisasterAlarm = "alertDisaster/alarm/";
 let connectionDataBase = null;                                                      // Variable para almacenar la conexion a la base de dato 
 let socketConnection = null;
 
@@ -33,8 +34,6 @@ let team = [
     { name: 'Pablo', organization: "agronomy", birth_year: 1986}
     ];
 let tagline = "great team";
-//let labels = ["8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"]
-//let data = [3, 4, 2, 1, 3, 1, 2]
 let count = 0;
 
 clientMqtt.on('connect', function() {                                               //Establecer conexion servidor mqtt
@@ -72,6 +71,7 @@ clientMqtt.on('connect', function() {                                           
             }
 
           r.table('level_water_data').insert({         //Almacenamos en dato en la base datos
+            "timestamp": new Date(),
             "time": dataString.time,
             "date": dataString.date,
             "topic": topic,
@@ -79,9 +79,14 @@ clientMqtt.on('connect', function() {                                           
             }).run(connectionDataBase, 
               // function(err, result) { console.log("error>", err, result) }                             //Mostramos el resultado por consola
               function(){
-                socketConnection.emit("db:update", dataString , function(err){
-                  console.log(err);
-                });
+                if (socketConnection != null){
+                  if(topic == "alertDisaster/river/tempisque_1/levelWater"){
+                    socketConnection.emit("db:update", dataString);
+                  }
+                }
+                else{
+                  console.log("socket not set".red);
+                }
               });
         });
       }
@@ -98,7 +103,6 @@ io.on('connection', socket => {                               //Socket IO
     });
   
   socketConnection.on('alarmI:update', ()=>{
-    console.log('socket recibido'.yellow);
     socketConnection.broadcast.emit('alarmI:update', count);
     });
   
@@ -111,6 +115,15 @@ io.on('connection', socket => {                               //Socket IO
         }
     });
    });
+
+  socketConnection.on('push:Alarm', ()=>{
+    if(clientMqtt.connected == true){
+      clientMqtt.publish(topicDisasterAlarm+"sensor1", "alerta de inundacion");
+    }else{
+      console.log("Cliente Mqtt no conectado");
+      }
+    });
+
 });
 
 //setting
@@ -128,18 +141,21 @@ app.get('/', async (req, res, next) => {                      //Pagina Inicio
   let labels = [];
   let data = [];
 
-  let posts = await r.table('level_water_data').orderBy(r.asc('time')).limit(10).run(connectionDataBase)
+  let posts = await r.table('level_water_data').orderBy(r.desc('timestamp')).limit(10).run(connectionDataBase)
    .then(cursor => cursor.toArray());
   
+  let imn_stations = await r.table('imn_station').orderBy(r.desc('name')).run(connectionDataBase)
+   .then(cursor => cursor.toArray());
+
   for (let reg of posts){
-    labels.push(reg.time);
-    data.push(reg.data);
+    labels.unshift(reg.time);
+    data.unshift(reg.data);
   }
 
   res.render('index',{
     labels: labels,
     data: data,
-    posts: posts
+    imn: imn_stations,
     },(err, html) => {
       res.send(html);
     });
