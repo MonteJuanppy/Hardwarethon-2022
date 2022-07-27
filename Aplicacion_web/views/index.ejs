@@ -11,7 +11,7 @@
       
       <div class ="row">
 
-        <div class ="col-sm-2 col-md-2 col-lg-2 col-xl-2 py-1">
+        <div class ="col-sm-2 col-md-2 col-lg-2 col-xl-2 py-2">
           <div class="jumbotron">
             <h3>Hardwarethon</h3>
 
@@ -46,10 +46,14 @@
         </div>
 
         <div class ="col-sm-12 col-md-1 col-lg-1 col-xl-1 py-2">
-          <div class="d-grid gap-2">
-            <button id= alarmI type="button" class="btn btn-success"><span class="cil-contrast btn-icon mr-2"></span> Alarma I</button>
-            <button id=alarmII type="button" class="btn btn-warning"><span class="cil-contrast btn-icon mr-2"></span> Alarma II</button>
-            <button id=pushAlarm type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span> pushAlarm</button>
+          <div class= "row">  
+            <div class= "col px-1">  
+              <div class="d-grid gap-2">
+                <button id= alarmI type="button" class="btn btn-success"><span class="cil-contrast btn-icon mr-2"></span> Alarma I</button>
+                <button id=alarmII type="button" class="btn btn-warning"><span class="cil-contrast btn-icon mr-2"></span> Alarma II</button>
+                <button id=pushAlarm type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span> pushAlarm</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -127,16 +131,66 @@
   ////////////////////////////////////////////////////////////////////
 
   var geoJsonImn_station = <%- JSON.stringify(imn); %>
+  var geoJsonDevices = <%- JSON.stringify(devices); %>
+  console.log(geoJsonDevices);
 
-  var map = L.map('map').setView([09.92, -84.07], 8);
-  var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  var stationIcon = new L.icon({
+    //iconUrl: 'icons8-iot-64.png',
+    iconUrl: 'icons8-tarea-del-sistema-48.png',
+    iconSize:     [20, 20],
+    iconAnchor:   [10, 10],
+  });
+    
+  var devicesIcon = new L.icon({
+    iconUrl: 'icons8-iot-64.png',
+    iconSize:     [30, 30],
+    iconAnchor:   [15, 15],
+  });
+
+  var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+  var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+  var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+  var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+  var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+  });
+  
 
+  var layerDevices = L.layerGroup();
 
-  var myLayer = L.geoJSON().addTo(map);
-  myLayer.addData(geoJsonImn_station);
+  for (device of geoJsonDevices){
+    marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: devicesIcon}).bindPopup(device.properties.location).addTo(layerDevices)
+  }
+  
+  var layerStationImn = L.layerGroup();
+
+  for (station of geoJsonImn_station){
+    marker = new L.marker([station.geometry.coordinates[1], station.geometry.coordinates[0]],{icon: stationIcon}).bindPopup(station.properties.name).addTo(layerStationImn)
+  }
+  
+  var map = L.map('map', {
+    center: [09.92, -84.07],
+    zoom: 8,
+    layers: [satellite, layerDevices],
+    });
+  
+  var baseLayers = {
+    'OpenStreetMap': osm,
+    'Streets': streets,
+    'Satellite': satellite,
+    };
+
+  var overlays = {
+    'Monitores Iot': layerDevices,
+    'Estaciones Automaticas IMN': layerStationImn,
+    };
+
+  var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
+
+  //var map = L.map('map').setView([09.92, -84.07], 8);
+  //var myLayer = L.geoJSON().addTo(map);
+  //myLayer.addData(geoJsonImn_station);
 
   socket.on("map:update", () => {
     var polygon = L.polygon([
@@ -145,26 +199,13 @@
       [10.10, -84.147]
       ]).addTo(map).bindPopup('Zona de Riesgo');
     });
-/*
-	var circle = L.circle([51.508, -0.11], {
-		color: 'red',
-		fillColor: '#f03',
-		fillOpacity: 0.5,
-		radius: 500
-	}).addTo(map).bindPopup('I am a circle.');
-
-
-	var popup = L.popup()
-		.setLatLng([10.4, -85.5])
-		.setContent('Standalone popup.')
-		.openOn(map);
-*/	
-var popup = L.popup();
+  
+  var popup = L.popup();
 
   function onMapClick(e) {
     popup
     .setLatLng(e.latlng)
-    .setContent('Tu has hecho clip en ' + e.latlng.toString())
+    .setContent('Has hecho clip en ' + e.latlng.toString())
     .openOn(map);
     console.log(e.latlng)
     }
