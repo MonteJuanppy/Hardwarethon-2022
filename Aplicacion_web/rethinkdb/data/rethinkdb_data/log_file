@@ -71,3 +71,47 @@
 2022-07-27T21:24:06.730949594 21216.806281s info: Table fc37b962-999b-486a-9eb4-9d06caab3aaa: Starting a new Raft election for term 1.
 2022-07-27T21:24:06.746354526 21216.821685s info: Table fc37b962-999b-486a-9eb4-9d06caab3aaa: Added replica on this server.
 2022-07-27T21:24:06.832816304 21216.908147s info: Table fc37b962-999b-486a-9eb4-9d06caab3aaa: This server is Raft leader for term 1. Latest log index is 0.
+2022-07-28T03:25:42.108208145 35559.998561s notice: Server got SIGTERM from pid 0, uid 0; shutting down...
+2022-07-28T03:25:42.185938296 35560.076290s notice: Shutting down client connections...
+2022-07-28T03:25:42.219410540 35560.109763s notice: All client connections closed.
+2022-07-28T03:25:42.219423448 35560.109775s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2022-07-28T03:25:43.920890145 35561.811242s notice: Storage engine shut down.
+2022-07-28T03:29:50.320073500 0.424904s notice: Running rethinkdb 2.4.2~0bullseye (GCC 10.2.1)...
+2022-07-28T03:29:50.396844473 0.501676s notice: Running on Linux 5.15.0-41-generic x86_64
+2022-07-28T03:29:50.397007481 0.501838s notice: Loading data from directory /data/rethinkdb_data
+2022-07-28T03:29:50.679924732 0.784755s info: Automatically using cache size of 153 MB
+2022-07-28T03:29:50.706558894 0.811390s notice: Listening for intracluster connections on port 29015
+2022-07-28T03:29:51.063764275 1.168595s notice: Listening for client driver connections on port 28015
+2022-07-28T03:29:51.063921492 1.168752s notice: Listening for administrative HTTP connections on port 8080
+2022-07-28T03:29:51.063928597 1.168759s notice: Listening on cluster addresses: 127.0.0.1, 172.19.0.2
+2022-07-28T03:29:51.063935430 1.168766s notice: Listening on driver addresses: 127.0.0.1, 172.19.0.2
+2022-07-28T03:29:51.063975943 1.168806s notice: Listening on http addresses: 127.0.0.1, 172.19.0.2
+2022-07-28T03:29:51.063983568 1.168814s notice: Server ready, "1d140593f84f_aul" 39e87888-7638-466e-a721-e98efacf9899
+2022-07-28T03:29:52.060251919 2.165083s info: Table fc37b962-999b-486a-9eb4-9d06caab3aaa: Starting a new Raft election for term 2.
+2022-07-28T03:29:52.136207961 2.241039s info: Table fc37b962-999b-486a-9eb4-9d06caab3aaa: This server is Raft leader for term 2. Latest log index is 2.
+2022-07-28T03:29:52.220559011 2.325390s info: Table d5ff9451-5663-44ba-8135-64dbd2ccb6c3: Starting a new Raft election for term 3.
+2022-07-28T03:29:52.269753502 2.374584s info: Table d5ff9451-5663-44ba-8135-64dbd2ccb6c3: This server is Raft leader for term 3. Latest log index is 6.
+2022-07-28T03:29:52.516901737 2.621732s info: Table c211b3ab-cf97-42b3-afe7-8068b5053d5a: Starting a new Raft election for term 4.
+2022-07-28T03:29:53.647723508 3.752554s info: Table c211b3ab-cf97-42b3-afe7-8068b5053d5a: This server is Raft leader for term 4. Latest log index is 10.
+2022-07-28T03:51:17.503497959 1287.608329s notice: Server got SIGTERM from pid 0, uid 0; shutting down...
+2022-07-28T03:51:17.571754645 1287.676585s notice: Shutting down client connections...
+2022-07-28T03:51:18.220376312 1288.325207s notice: All client connections closed.
+2022-07-28T03:51:18.220508090 1288.325338s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2022-07-28T03:51:18.390270259 1288.495101s notice: Storage engine shut down.
+2022-07-28T13:22:18.702576473 0.582907s notice: Running rethinkdb 2.4.2~0bullseye (GCC 10.2.1)...
+2022-07-28T13:22:18.764800224 0.645132s notice: Running on Linux 5.15.0-41-generic x86_64
+2022-07-28T13:22:18.764894768 0.645225s notice: Loading data from directory /data/rethinkdb_data
+2022-07-28T13:22:18.956586770 0.836917s info: Automatically using cache size of 728 MB
+2022-07-28T13:22:19.016368983 0.896700s notice: Listening for intracluster connections on port 29015
+2022-07-28T13:22:19.345783012 1.226114s notice: Listening for client driver connections on port 28015
+2022-07-28T13:22:19.346077736 1.226408s notice: Listening for administrative HTTP connections on port 8080
+2022-07-28T13:22:19.346589590 1.226920s notice: Listening on cluster addresses: 127.0.0.1, 172.19.0.2
+2022-07-28T13:22:19.346611218 1.226942s notice: Listening on driver addresses: 127.0.0.1, 172.19.0.2
+2022-07-28T13:22:19.346634000 1.226965s notice: Listening on http addresses: 127.0.0.1, 172.19.0.2
+2022-07-28T13:22:19.346654990 1.226986s notice: Server ready, "1d140593f84f_aul" 39e87888-7638-466e-a721-e98efacf9899
+2022-07-28T13:22:20.492242099 2.372572s info: Table d5ff9451-5663-44ba-8135-64dbd2ccb6c3: Starting a new Raft election for term 4.
+2022-07-28T13:22:20.549081828 2.429413s info: Table d5ff9451-5663-44ba-8135-64dbd2ccb6c3: This server is Raft leader for term 4. Latest log index is 10.
+2022-07-28T13:22:20.822067580 2.702398s info: Table c211b3ab-cf97-42b3-afe7-8068b5053d5a: Starting a new Raft election for term 5.
+2022-07-28T13:22:20.855098996 2.735430s info: Table fc37b962-999b-486a-9eb4-9d06caab3aaa: Starting a new Raft election for term 3.
+2022-07-28T13:22:20.871292213 2.751623s info: Table c211b3ab-cf97-42b3-afe7-8068b5053d5a: This server is Raft leader for term 5. Latest log index is 14.
+2022-07-28T13:22:20.971262462 2.851593s info: Table fc37b962-999b-486a-9eb4-9d06caab3aaa: This server is Raft leader for term 3. Latest log index is 6.

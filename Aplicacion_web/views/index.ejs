@@ -22,14 +22,17 @@
           <div class = "row">
             <div class="col"> 
               <div id="map"></div>
+             
+              <select name="select-location" id="select-location">
+                <option value="-1">Seleccione Localidad:</option>
+              </select>
+
             </div>
           </div>
         
           <div class = "row">
             <div class="col py-2"> 
-              <div class="card chart-container">
-                <canvas id="chart"></canvas>
-              </div>
+
             </div>
             <div class="col py-2"> 
               <div class="card" style="width: 18rem;">
@@ -64,70 +67,10 @@
     </footer>
   </body>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"> </script>
 <script src="socket.io/socket.io.js"> </script>
 
 <script>
-  const ctx = document.getElementById("chart").getContext('2d');
-  let colorChart = [
-    'rgba(161, 198, 247, 1)',
-    'rgba(255, 244, 0, 0.85)',
-    'rgba(255, 0, 0, 0.9)',
-  ]
-
-  const waterLevelChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: <%- JSON.stringify(labels); %>,
-      datasets: [{label: 'Levels',
-                  backgroundColor: colorChart[0], 
-                  borderColor: 'rgb(47, 128, 237)', 
-                  data: <%- JSON.stringify(data); %>,
-        }]
-    },
-    options: {
-      scales: { yAxes: [{ ticks: { beginAtZero: true, }}]}
-    },
-  });
-
   const socket = io();
-
-  socket.on("db:update", function(data) {
-    console.log("mqttRes", data)
-    
-    if(waterLevelChart.data.labels.length != 15) {
-      waterLevelChart.data.labels.push(data.time);  //Add time in x-asix
-      waterLevelChart.data.datasets.forEach((dataset) => {
-        dataset.data.push(data.data); //Add data in y-axis
-        if (data.data > 15){
-          dataset.backgroundColor = colorChart[2];
-        }
-        else if(data.data <= 15 && data.data > 10){
-          dataset.backgroundColor = colorChart[1];
-        }
-        else{dataset.backgroundColor = colorChart[0];}
-      });
-    }
-    else {
-      waterLevelChart.data.labels.shift(); //Remove first time data
-      waterLevelChart.data.labels.push(data.time); //Insert latest time data
-      waterLevelChart.data.datasets.forEach((dataset) => {
-        dataset.data.shift(); //Remove first temp data
-        dataset.data.push(data.data); //Insert latest temp data
-        if (data.data > 15){
-          dataset.backgroundColor = colorChart[2];
-        }
-        else if(data.data <= 15 && data.data > 10){
-          dataset.backgroundColor = colorChart[1];
-        }
-        else{dataset.backgroundColor = colorChart[0];}
-        });
-    }
-
-    waterLevelChart.update(); //Update the graph.
-  });
-
-
   let bottonAlarmI = document.getElementById("alarmI");
   bottonAlarmI.addEventListener('click', async () => {
       const response = await fetch('/dis', {method: 'POST'});
@@ -155,17 +98,22 @@
 
   var geoJsonImn_station = <%- JSON.stringify(imn); %>
   var geoJsonDevices = <%- JSON.stringify(devices); %>
-  console.log(geoJsonDevices);
 
   var stationIcon = new L.icon({
     //iconUrl: 'icons8-iot-64.png',
-    iconUrl: 'icons8-tarea-del-sistema-48.png',
+    iconUrl: 'icons/icons8-tarea-del-sistema-48.png',
     iconSize:     [20, 20],
     iconAnchor:   [10, 10],
   });
     
-  var devicesIcon = new L.icon({
-    iconUrl: 'icons8-iot-64.png',
+  var sensorIcon = new L.icon({
+    iconUrl: 'icons/icons8-iot-64.png',
+    iconSize:     [30, 30],
+    iconAnchor:   [15, 15],
+  });
+
+  var alarmIcon = new L.icon({
+    iconUrl: 'icons/icons8-button-48.png',
     iconSize:     [30, 30],
     iconAnchor:   [15, 15],
   });
@@ -180,22 +128,45 @@
   });
   
 
-  var layerDevices = L.layerGroup();
-
-  for (device of geoJsonDevices){
-    marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: devicesIcon}).bindPopup(device.properties.location).addTo(layerDevices)
-  }
-  
+  var layerSensors = L.layerGroup();
+  var layerAlarms = L.layerGroup();
   var layerStationImn = L.layerGroup();
 
+  var selectIoT = document.getElementById('select-location');
+  
+  for (device of geoJsonDevices){
+    
+    var opt = document.createElement('option');
+    opt.value = device.geometry.coordinates;
+    opt.innerHTML = device.properties.location;
+    selectIoT.appendChild(opt);
+
+    if (device.properties.type_device == "sensor"){
+      marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: sensorIcon}).bindPopup(`
+        Localizacion: ${device.properties.location} <br>
+        Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
+        <a href="${device.properties.url}">Condiciones Actuales</a>
+        `).addTo(layerSensors);
+    }else{
+      marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: alarmIcon}).bindPopup(`
+        Localizacion: ${device.properties.location} <br>
+        Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
+        <a href="${device.properties.url}">Condiciones Actuales</a>
+        `).addTo(layerAlarms);
+    }
+  }
+
   for (station of geoJsonImn_station){
-    marker = new L.marker([station.geometry.coordinates[1], station.geometry.coordinates[0]],{icon: stationIcon}).bindPopup(station.properties.name).addTo(layerStationImn)
+    marker = new L.marker([station.geometry.coordinates[1], station.geometry.coordinates[0]],{icon: stationIcon}).bindPopup(`
+    <h6>Estacion: ${station.properties.name}</h6><br>
+    <a href="${station.properties.url}">Condiciones Actuales</a>
+    `).addTo(layerStationImn)
   }
   
   var map = L.map('map', {
     center: [09.92, -84.07],
     zoom: 8,
-    layers: [satellite, layerDevices],
+    layers: [osm, layerSensors, layerAlarms],
     });
   
   var baseLayers = {
@@ -205,13 +176,18 @@
     };
 
   var overlays = {
-    'Monitores Iot': layerDevices,
+    'Monitores Iot': layerSensors,
+    'Alarmas Notificadoras': layerAlarms,
     'Estaciones Automaticas IMN': layerStationImn,
     };
 
   var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
-
-  //var map = L.map('map').setView([09.92, -84.07], 8);
+  
+  document.getElementById('select-location').addEventListener('change',function(e){
+    let coords = e.target.value.split(",");
+    map.flyTo([coords[1],coords[0]],13);});
+    
+    //var map = L.map('map').setView([09.92, -84.07], 8);
   //var myLayer = L.geoJSON().addTo(map);
   //myLayer.addData(geoJsonImn_station);
 

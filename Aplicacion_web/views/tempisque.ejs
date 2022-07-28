@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <%- include('partials/head'); %>
+  </head>
+
+  <body>
+   
+          <%- include('partials/header'); %>
+    <div class="container-fluid">
+      
+      <div class ="row">
+
+        <div class ="col-sm-2 col-md-2 col-lg-2 col-xl-2 py-2">
+          <div class="jumbotron">
+            <h3>TEMPISQUE</h3>
+
+          </div>
+        </div>
+        
+        <div class ="col-sm-12 col-md-9 col-lg-9 col-xl-9 py-2">
+          <div class = "row">
+            <div class="col"> 
+            </div>
+          </div>
+        
+          <div class = "row">
+            <div class="col py-2"> 
+              <div class="card chart-container">
+                <canvas id="chart"></canvas>
+              </div>
+            </div>
+            <div class="col py-2"> 
+                
+              <div class="d-grid gap-2">
+                <button id= alarmI type="button" class="btn btn-success"><span class="cil-contrast btn-icon mr-2"></span> Alarma I</button>
+                <button id=alarmII type="button" class="btn btn-warning"><span class="cil-contrast btn-icon mr-2"></span> Alarma II</button>
+                <button id=pushAlarm type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span> pushAlarm</button>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+
+        <div class ="col-sm-12 col-md-1 col-lg-1 col-xl-1 py-2">
+          <div class= "row">  
+            <div class= "col px-1">  
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    </div>
+    <footer>
+      <%- include('partials/footer'); %>
+    </footer>
+  </body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"> </script>
+<script src="socket.io/socket.io.js"> </script>
+
+<script>
+  const ctx = document.getElementById("chart").getContext('2d');
+  let colorChart = [
+    'rgba(161, 198, 247, 1)',
+    'rgba(255, 244, 0, 0.85)',
+    'rgba(255, 0, 0, 0.9)',
+  ]
+
+  const waterLevelChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: <%- JSON.stringify(labels); %>,
+      datasets: [{label: 'Levels',
+                  backgroundColor: colorChart[0], 
+                  borderColor: 'rgb(47, 128, 237)', 
+                  data: <%- JSON.stringify(data); %>,
+        }]
+    },
+    options: {
+      scales: { yAxes: [{ ticks: { beginAtZero: true, }}]}
+    },
+  });
+
+  const socket = io();
+
+  let bottonAlarmI = document.getElementById("alarmI");
+  bottonAlarmI.addEventListener('click', async () => {
+      const response = await fetch('/dis', {method: 'POST'});
+      const data = await response.json();
+      bottonAlarmI.textContent = data.count;
+      socket.emit("alarmI:update");             // Emitimos evento hacia el cliente
+    });
+
+  let bottonAlarmII = document.getElementById("alarmII");
+  bottonAlarmII.addEventListener('click', async() => {
+      socket.emit("alarmII:update");             // Emitimos evento hacia el cliente
+    });
+
+  let pushAlarm = document.getElementById("pushAlarm");
+  pushAlarm.addEventListener('click', async() => {
+      socket.emit("push:Alarm");             // Emitimos evento hacia el cliente
+    });
+  
+  socket.on("db:update", function(data) {
+    console.log("mqttRes", data)
+    
+    if(waterLevelChart.data.labels.length != 15) {
+      waterLevelChart.data.labels.push(data.time);  //Add time in x-asix
+      waterLevelChart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data.data); //Add data in y-axis
+        if (data.data > 15){
+          dataset.backgroundColor = colorChart[2];
+        }
+        else if(data.data <= 15 && data.data > 10){
+          dataset.backgroundColor = colorChart[1];
+        }
+        else{dataset.backgroundColor = colorChart[0];}
+      });
+    }
+    else {
+      waterLevelChart.data.labels.shift(); //Remove first time data
+      waterLevelChart.data.labels.push(data.time); //Insert latest time data
+      waterLevelChart.data.datasets.forEach((dataset) => {
+        dataset.data.shift(); //Remove first temp data
+        dataset.data.push(data.data); //Insert latest temp data
+        if (data.data > 15){
+          dataset.backgroundColor = colorChart[2];
+        }
+        else if(data.data <= 15 && data.data > 10){
+          dataset.backgroundColor = colorChart[1];
+        }
+        else{dataset.backgroundColor = colorChart[0];}
+        });
+    }
+
+    waterLevelChart.update(); //Update the graph.
+  });
+
+</script>
+</html>

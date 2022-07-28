@@ -165,6 +165,35 @@ app.get('/', async (req, res, next) => {                      //Pagina Inicio
     });
 });
 
+app.get('/tempisque', async (req, res, next) => {                      //Pagina Inicio
+
+  let labels = [];
+  let data = [];
+
+  let posts = await r.table('level_water_data').orderBy(r.desc('timestamp')).limit(10).run(connectionDataBase)
+   .then(cursor => cursor.toArray());
+
+  let imn_stations = await r.table('imn_station').orderBy(r.desc('name')).run(connectionDataBase)
+   .then(cursor => cursor.toArray());
+
+  let iot_devices = await r.table('disaster_monitors').run(connectionDataBase)
+   .then(cursor => cursor.toArray());
+
+  for (let reg of posts){
+    labels.unshift(reg.time);
+    data.unshift(reg.data);
+  }
+
+  res.render('tempisque',{
+    labels: labels,
+    data: data,
+    imn: imn_stations,
+    devices: iot_devices,
+    },(err, html) => {
+      res.send(html);
+    });
+});
+
 app.get('/contacts', (req, res) => {              //Pagina Contactos
     res.render('contact',{
     team: team,
