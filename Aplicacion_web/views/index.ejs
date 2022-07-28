@@ -69,15 +69,21 @@
 
 <script>
   const ctx = document.getElementById("chart").getContext('2d');
-  const myChart = new Chart(ctx, {
+  let colorChart = [
+    'rgba(161, 198, 247, 1)',
+    'rgba(255, 244, 0, 0.85)',
+    'rgba(255, 0, 0, 0.9)',
+  ]
+
+  const waterLevelChart = new Chart(ctx, {
     type: 'line',
     data: {
-      //labels: [],
       labels: <%- JSON.stringify(labels); %>,
-      datasets: [{label: 'Levels',backgroundColor: 'rgba(161, 198, 247, 1)', borderColor: 'rgb(47, 128, 237)', 
-      //data: [],
-      data: <%- JSON.stringify(data); %>,
-      }]
+      datasets: [{label: 'Levels',
+                  backgroundColor: colorChart[0], 
+                  borderColor: 'rgb(47, 128, 237)', 
+                  data: <%- JSON.stringify(data); %>,
+        }]
     },
     options: {
       scales: { yAxes: [{ ticks: { beginAtZero: true, }}]}
@@ -85,6 +91,43 @@
   });
 
   const socket = io();
+
+  socket.on("db:update", function(data) {
+    console.log("mqttRes", data)
+    
+    if(waterLevelChart.data.labels.length != 15) {
+      waterLevelChart.data.labels.push(data.time);  //Add time in x-asix
+      waterLevelChart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data.data); //Add data in y-axis
+        if (data.data > 15){
+          dataset.backgroundColor = colorChart[2];
+        }
+        else if(data.data <= 15 && data.data > 10){
+          dataset.backgroundColor = colorChart[1];
+        }
+        else{dataset.backgroundColor = colorChart[0];}
+      });
+    }
+    else {
+      waterLevelChart.data.labels.shift(); //Remove first time data
+      waterLevelChart.data.labels.push(data.time); //Insert latest time data
+      waterLevelChart.data.datasets.forEach((dataset) => {
+        dataset.data.shift(); //Remove first temp data
+        dataset.data.push(data.data); //Insert latest temp data
+        if (data.data > 15){
+          dataset.backgroundColor = colorChart[2];
+        }
+        else if(data.data <= 15 && data.data > 10){
+          dataset.backgroundColor = colorChart[1];
+        }
+        else{dataset.backgroundColor = colorChart[0];}
+        });
+    }
+
+    waterLevelChart.update(); //Update the graph.
+  });
+
+
   let bottonAlarmI = document.getElementById("alarmI");
   bottonAlarmI.addEventListener('click', async () => {
       const response = await fetch('/dis', {method: 'POST'});
@@ -107,26 +150,6 @@
     bottonAlarmI.textContent = data;
     });
 
-  socket.on("db:update", function(data) {
-    console.log("mqttRes", data)
-    
-    if(myChart.data.labels.length != 15) { 
-      myChart.data.labels.push(data.time);  //Add time in x-asix
-      myChart.data.datasets.forEach((dataset) => {
-        dataset.data.push(data.data); //Add temp in y-axis
-      });
-    }
-    else {
-      myChart.data.labels.shift(); //Remove first time data
-      myChart.data.labels.push(data.time); //Insert latest time data
-      myChart.data.datasets.forEach((dataset) => {
-        dataset.data.shift(); //Remove first temp data
-        dataset.data.push(data.data); //Insert latest temp data
-        });
-    }
-
-    myChart.update(); //Update the graph.
-  });
 
   ////////////////////////////////////////////////////////////////////
 
