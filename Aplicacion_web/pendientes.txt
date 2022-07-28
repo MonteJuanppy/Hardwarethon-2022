@@ -1,5 +1,6 @@
 Pendientes de trabajar en la plataforma
 
+diferenciar topic de datos de alarmas o instrucciones
 Indicador de señal recibida en el mapa de los diferentes sensores
 agregar capas de rios del pais
 agregar capa de cuencas

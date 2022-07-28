@@ -1,4 +1,5 @@
-let devicesJson = [{
+let devicesJson = [
+  {
   "type": "Feature",
   "geometry": {
     "type": "Point",
@@ -22,7 +23,7 @@ let devicesJson = [{
   "properties": {
     "type_device": "alarm",
     "location": "Los Corralillos",
-    "point_id": 1,
+    "point_id": 2,
     "parameter": "sound",
     "hot_point": "Rio Tempisque",
     "url": "/tempisque"
@@ -37,9 +38,54 @@ let devicesJson = [{
   "properties": {
     "type_device": "alarm",
     "location": "La Guinea",
-    "point_id": 2,
+    "point_id": 3,
     "parameter": "sound",
     "hot_point": "Rio Tempisque",
+    "url": "/tempisque"
+    }
+  },
+  {
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [-85.03925, 10.84123]
+    },
+  "properties": {
+    "type_device": "sensor",
+    "location": "Canalete",
+    "point_id": 4,
+    "parameter": "waterLevel",
+    "hot_point": "Rio Zapote",
+    "url": "/upala"
+    }
+  },
+  {
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [-85.015073, 10.899812]
+    },
+  "properties": {
+    "type_device": "alarm",
+    "location": "Upala",
+    "point_id": 5,
+    "parameter": "sound",
+    "hot_point": "Rio Zapote",
+    "url": "/upala"
+    }
+  },
+  {
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [-85.514956, 10.775064]
+    },
+  "properties": {
+    "type_device": "sensor",
+    "location": "Los Ahogados",
+    "point_id": 6,
+    "parameter": "waterLevel",
+    "hot_point": "Rios Los Ahogados",
     "url": "/tempisque"
     }
   },

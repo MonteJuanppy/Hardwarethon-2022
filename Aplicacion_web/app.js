@@ -43,7 +43,7 @@ clientMqtt.on('connect', function() {                                           
       .then(conn => {
         console.log('Database connected'.green);                                    
         connectionDataBase = conn;
-        return r.table('level_water_data').changes().run(connectionDataBase);       //Configura que al actualizarce la tabla dispare un evento
+        return r.table('sensors_data').changes().run(connectionDataBase);       //Configura que al actualizarce la tabla dispare un evento
       }).then(cursor => {
         cursor.each((err, row) => {
         if (err) throw err;
@@ -61,28 +61,34 @@ clientMqtt.on('connect', function() {                                           
       else{
         console.log("topic Subscribe")
         clientMqtt.on('message', function (topic, message, packet){                 //Recibimos topics
-        console.log('Topic: '.red + topic + ' Message: '.green + message );
-        
-          let today = new Date(); 
-          let dataString = {
-            date: today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear(), 
-            time: (today.getHours())+":"+(today.getMinutes()+":"+(today.getSeconds())),
-            data: message.toString(),
-            }
+          console.log('Topic: '.red + topic + ' Message: '.green + message );
 
-          r.table('level_water_data').insert({         //Almacenamos en dato en la base datos
+          let topicMessage = topic.split("/");
+
+          let today = new Date(); 
+
+          let dataGraph = {
             "timestamp": new Date(),
-            "time": dataString.time,
-            "date": dataString.date,
-            "topic": topic,
-            "data": dataString.data,
-            }).run(connectionDataBase, 
+            "time": today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear(),
+            "date": (today.getHours())+":"+(today.getMinutes()+":"+(today.getSeconds())),
+            "topic": {
+              "type_device": topicMessage[1],
+              "location": topicMessage[2],
+              "point_id": topicMessage[3],
+              "parameter": topicMessage[4],
+              "hot_point": topicMessage[5],
+              "type_message": topicMessage[6],
+              },
+            "data": message.toString(),
+            };
+
+          r.table('sensors_data').insert(         //Almacenamos en dato en la base datos
+            dataGraph 
+            ).run(connectionDataBase, 
               // function(err, result) { console.log("error>", err, result) }                             //Mostramos el resultado por consola
               function(){
                 if (socketConnection != null){
-                  if(topic == "alertDisaster/river/tempisque_1/levelWater"){
-                    socketConnection.emit("db:update", dataString);
-                  }
+                  socketConnection.emit("db:update", dataGraph);
                 }
                 else{
                   console.log("socket not set".red);
@@ -92,7 +98,6 @@ clientMqtt.on('connect', function() {                                           
       }
     });
 });
-
 
 io.on('connection', socket => {                               //Socket IO
   console.log('Socket conected'.green);
@@ -118,12 +123,11 @@ io.on('connection', socket => {                               //Socket IO
 
   socketConnection.on('push:Alarm', ()=>{
     if(clientMqtt.connected == true){
-      clientMqtt.publish(topicDisasterAlarm+"sensor1", "alerta de inundacion");
+      clientMqtt.publish("alertDisaster/sensor/Filadelfia/1/waterLevel/rio_tempisque/alerm", "1");
     }else{
       console.log("Cliente Mqtt no conectado");
       }
     });
-
 });
 
 //setting
@@ -134,30 +138,16 @@ app.set('views', __dirname + '/views');                       //Indicamos direct
 app.use(morgan('dev'));                                       //Configuracion de paquete que da colores a las salidas de consola
 app.use(express.static(__dirname + '/public'));               //Indicamos directorio de paginas estaticas
 
-
 //rutas de las diferentes paginas a las que se accede en el servicio
 app.get('/', async (req, res, next) => {                      //Pagina Inicio
-
-  let labels = [];
-  let data = [];
-
-  let posts = await r.table('level_water_data').orderBy(r.desc('timestamp')).limit(10).run(connectionDataBase)
-   .then(cursor => cursor.toArray());
 
   let imn_stations = await r.table('imn_station').orderBy(r.desc('name')).run(connectionDataBase)
    .then(cursor => cursor.toArray());
 
-  let iot_devices = await r.table('disaster_monitors').run(connectionDataBase)
+  let iot_devices = await r.table('disaster_monitors').orderBy(r.desc('properties.location')).run(connectionDataBase)
    .then(cursor => cursor.toArray());
-
-  for (let reg of posts){
-    labels.unshift(reg.time);
-    data.unshift(reg.data);
-  }
-
+  
   res.render('index',{
-    labels: labels,
-    data: data,
     imn: imn_stations,
     devices: iot_devices,
     },(err, html) => {
@@ -170,7 +160,7 @@ app.get('/tempisque', async (req, res, next) => {                      //Pagina 
   let labels = [];
   let data = [];
 
-  let posts = await r.table('level_water_data').orderBy(r.desc('timestamp')).limit(10).run(connectionDataBase)
+  let posts = await r.table('sensors_data').filter({topic:{location: "Filadelfia"}}).orderBy(r.desc('timestamp')).limit(10).run(connectionDataBase)
    .then(cursor => cursor.toArray());
 
   let imn_stations = await r.table('imn_station').orderBy(r.desc('name')).run(connectionDataBase)

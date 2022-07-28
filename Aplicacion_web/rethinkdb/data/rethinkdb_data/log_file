@@ -115,3 +115,8 @@
 2022-07-28T13:22:20.855098996 2.735430s info: Table fc37b962-999b-486a-9eb4-9d06caab3aaa: Starting a new Raft election for term 3.
 2022-07-28T13:22:20.871292213 2.751623s info: Table c211b3ab-cf97-42b3-afe7-8068b5053d5a: This server is Raft leader for term 5. Latest log index is 14.
 2022-07-28T13:22:20.971262462 2.851593s info: Table fc37b962-999b-486a-9eb4-9d06caab3aaa: This server is Raft leader for term 3. Latest log index is 6.
+2022-07-28T20:31:29.140743228 15785.420765s notice: Removing file /data/rethinkdb_data/c211b3ab-cf97-42b3-afe7-8068b5053d5a
+2022-07-28T20:31:29.141053061 15785.421075s info: Table c211b3ab-cf97-42b3-afe7-8068b5053d5a: Deleted the table.
+2022-07-28T20:31:58.674957176 15814.954980s info: Table e0f7cc97-eab2-4287-98c9-f49992b3a1be: Starting a new Raft election for term 1.
+2022-07-28T20:31:58.675652218 15814.955674s info: Table e0f7cc97-eab2-4287-98c9-f49992b3a1be: Added replica on this server.
+2022-07-28T20:31:58.719526501 15814.999549s info: Table e0f7cc97-eab2-4287-98c9-f49992b3a1be: This server is Raft leader for term 1. Latest log index is 0.

@@ -11,46 +11,26 @@
       
       <div class ="row">
 
-        <div class ="col-sm-2 col-md-2 col-lg-2 col-xl-2 py-2">
+        <div class ="col-sm-12 col-md-2 col-lg-2 col-xl-2 py-2">
           <div class="jumbotron">
             <h3>TEMPISQUE</h3>
 
           </div>
         </div>
         
-        <div class ="col-sm-12 col-md-9 col-lg-9 col-xl-9 py-2">
-          <div class = "row">
-            <div class="col"> 
-            </div>
-          </div>
-        
+        <div class ="col-sm-12 col-md-10 col-lg-10 col-xl-10 py-2">
           <div class = "row">
             <div class="col py-2"> 
               <div class="card chart-container">
                 <canvas id="chart"></canvas>
               </div>
             </div>
-            <div class="col py-2"> 
-                
-              <div class="d-grid gap-2">
-                <button id= alarmI type="button" class="btn btn-success"><span class="cil-contrast btn-icon mr-2"></span> Alarma I</button>
-                <button id=alarmII type="button" class="btn btn-warning"><span class="cil-contrast btn-icon mr-2"></span> Alarma II</button>
-                <button id=pushAlarm type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span> pushAlarm</button>
+              <div class= "col px-2">  
+                <div id="local_map"></div>
+                <select name="select-location" id="select-location">
+                <option value="-1">Seleccione Localidad:</option>
               </div>
-
-
-            </div>
           </div>
-        </div>
-
-        <div class ="col-sm-12 col-md-1 col-lg-1 col-xl-1 py-2">
-          <div class= "row">  
-            <div class= "col px-1">  
-            </div>
-          </div>
-        </div>
-      </div>
-    
     </div>
     <footer>
       <%- include('partials/footer'); %>
@@ -85,58 +65,144 @@
 
   const socket = io();
 
-  let bottonAlarmI = document.getElementById("alarmI");
-  bottonAlarmI.addEventListener('click', async () => {
-      const response = await fetch('/dis', {method: 'POST'});
-      const data = await response.json();
-      bottonAlarmI.textContent = data.count;
-      socket.emit("alarmI:update");             // Emitimos evento hacia el cliente
-    });
-
-  let bottonAlarmII = document.getElementById("alarmII");
-  bottonAlarmII.addEventListener('click', async() => {
-      socket.emit("alarmII:update");             // Emitimos evento hacia el cliente
-    });
-
-  let pushAlarm = document.getElementById("pushAlarm");
-  pushAlarm.addEventListener('click', async() => {
-      socket.emit("push:Alarm");             // Emitimos evento hacia el cliente
-    });
-  
   socket.on("db:update", function(data) {
     console.log("mqttRes", data)
-    
-    if(waterLevelChart.data.labels.length != 15) {
-      waterLevelChart.data.labels.push(data.time);  //Add time in x-asix
-      waterLevelChart.data.datasets.forEach((dataset) => {
-        dataset.data.push(data.data); //Add data in y-axis
-        if (data.data > 15){
-          dataset.backgroundColor = colorChart[2];
-        }
-        else if(data.data <= 15 && data.data > 10){
-          dataset.backgroundColor = colorChart[1];
-        }
-        else{dataset.backgroundColor = colorChart[0];}
-      });
-    }
-    else {
-      waterLevelChart.data.labels.shift(); //Remove first time data
-      waterLevelChart.data.labels.push(data.time); //Insert latest time data
-      waterLevelChart.data.datasets.forEach((dataset) => {
-        dataset.data.shift(); //Remove first temp data
-        dataset.data.push(data.data); //Insert latest temp data
-        if (data.data > 15){
-          dataset.backgroundColor = colorChart[2];
-        }
-        else if(data.data <= 15 && data.data > 10){
-          dataset.backgroundColor = colorChart[1];
-        }
-        else{dataset.backgroundColor = colorChart[0];}
+    if(data.topic.location == "Filadelfia" && data.topic.type_message == "data"){
+      if(waterLevelChart.data.labels.length != 15) {
+        waterLevelChart.data.labels.push(data.time);  //Add time in x-asix
+        waterLevelChart.data.datasets.forEach((dataset) => {
+          dataset.data.push(data.data); //Add data in y-axis
+          if (data.data > 15){
+            dataset.backgroundColor = colorChart[2];
+          }
+          else if(data.data <= 15 && data.data > 10){
+            dataset.backgroundColor = colorChart[1];
+          }
+          else{dataset.backgroundColor = colorChart[0];}
         });
+      }
+      else {
+        waterLevelChart.data.labels.shift(); //Remove first time data
+        waterLevelChart.data.labels.push(data.time); //Insert latest time data
+        waterLevelChart.data.datasets.forEach((dataset) => {
+          dataset.data.shift(); //Remove first temp data
+          dataset.data.push(data.data); //Insert latest temp data
+          if (data.data > 15){
+            dataset.backgroundColor = colorChart[2];
+          }
+          else if(data.data <= 15 && data.data > 10){
+            dataset.backgroundColor = colorChart[1];
+          }
+          else{dataset.backgroundColor = colorChart[0];}
+          }
+        );
+      }
+    waterLevelChart.update(); //Update the graph.
+    }else{console.log("not data")}
+  });
+
+  var geoJsonImn_station = <%- JSON.stringify(imn); %>
+  var geoJsonDevices = <%- JSON.stringify(devices); %>
+
+  var stationIcon = new L.icon({
+    //iconUrl: 'icons8-iot-64.png',
+    iconUrl: 'icons/icons8-tarea-del-sistema-48.png',
+    iconSize:     [20, 20],
+    iconAnchor:   [10, 10],
+  });
+    
+  var sensorIcon = new L.icon({
+    iconUrl: 'icons/icons8-iot-64.png',
+    iconSize:     [30, 30],
+    iconAnchor:   [15, 15],
+  });
+
+  var alarmIcon = new L.icon({
+    iconUrl: 'icons/icons8-button-48.png',
+    iconSize:     [30, 30],
+    iconAnchor:   [15, 15],
+  });
+
+  var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+  var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+  var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+  var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+  var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  });
+  
+
+  var layerSensors = L.layerGroup();
+  var layerAlarms = L.layerGroup();
+  var layerStationImn = L.layerGroup();
+
+  var selectIoT = document.getElementById('select-location');
+  
+  for (device of geoJsonDevices){
+    
+    var opt = document.createElement('option');
+    opt.value = device.geometry.coordinates;
+    opt.innerHTML = device.properties.location;
+    selectIoT.appendChild(opt);
+
+    if (device.properties.type_device == "sensor"){
+      marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: sensorIcon}).bindPopup(`
+        Localizacion: ${device.properties.location} <br>
+        Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
+        <a href="${device.properties.url}">Condiciones Actuales</a>
+        `).addTo(layerSensors);
+    }else{
+      marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: alarmIcon}).bindPopup(`
+        Localizacion: ${device.properties.location} <br>
+        Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
+        <a href="${device.properties.url}">Condiciones Actuales</a>
+        `).addTo(layerAlarms);
+    }
+  }
+
+  for (station of geoJsonImn_station){
+    marker = new L.marker([station.geometry.coordinates[1], station.geometry.coordinates[0]],{icon: stationIcon}).bindPopup(`
+    <h6>Estacion: ${station.properties.name}</h6><br>
+    <a href="${station.properties.url}">Condiciones Actuales</a>
+    `).addTo(layerStationImn)
+  }
+  
+  var map = L.map('local_map', {
+    center: [10.400702, -85.538121],
+    zoom: 11,
+    layers: [osm, layerSensors, layerAlarms],
+    });
+  
+  var baseLayers = {
+    'OpenStreetMap': osm,
+    'Streets': streets,
+    'Satellite': satellite,
+    };
+
+  var overlays = {
+    'Monitores Iot': layerSensors,
+    'Alarmas Notificadoras': layerAlarms,
+    'Estaciones Automaticas IMN': layerStationImn,
+    };
+
+  var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
+  
+  document.getElementById('select-location').addEventListener('change',function(e){
+    let coords = e.target.value.split(",");
+    map.flyTo([coords[1],coords[0]],13);});
+ 
+  var popup = L.popup();
+
+  function onMapClick(e) {
+    popup
+    .setLatLng(e.latlng)
+    .setContent('Has hecho clip en ' + e.latlng.toString())
+    .openOn(map);
+    console.log(e.latlng)
     }
 
-    waterLevelChart.update(); //Update the graph.
-  });
+  map.on('click', onMapClick);
 
 </script>
 </html>
