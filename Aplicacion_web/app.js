@@ -62,8 +62,15 @@ clientMqtt.on('connect', function() {                                           
         console.log("topic Subscribe")
         clientMqtt.on('message', function (topic, message, packet){                 //Recibimos topics
           console.log('Topic: '.red + topic + ' Message: '.green + message );
-
+          
+          let table_database = null;
+          
           let topicMessage = topic.split("/");
+          if (topicMessage[3] == 'sensor'){
+            table_database = 'sensors_data';
+          }else if (topicMessage[3] == 'alarm'){
+            table_database = 'alarm_data';
+          }
 
           let today = new Date(); 
 
@@ -72,17 +79,16 @@ clientMqtt.on('connect', function() {                                           
             "time": today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear(),
             "date": (today.getHours())+":"+(today.getMinutes()+":"+(today.getSeconds())),
             "topic": {
-              "type_device": topicMessage[1],
+              "hot_point": topicMessage[1],
               "location": topicMessage[2],
-              "point_id": topicMessage[3],
-              "parameter": topicMessage[4],
-              "hot_point": topicMessage[5],
-              "type_message": topicMessage[6],
+              "type_device": topicMessage[3],
+              "device_id": topicMessage[4],
+              "parameter": topicMessage[5],
               },
             "data": message.toString(),
             };
 
-          r.table('sensors_data').insert(         //Almacenamos en dato en la base datos
+          r.table(table_database).insert(         //Almacenamos en dato en la base datos
             dataGraph 
             ).run(connectionDataBase, 
               // function(err, result) { console.log("error>", err, result) }                             //Mostramos el resultado por consola
@@ -123,7 +129,8 @@ io.on('connection', socket => {                               //Socket IO
 
   socketConnection.on('push:Alarm', ()=>{
     if(clientMqtt.connected == true){
-      clientMqtt.publish("alertDisaster/sensor/Filadelfia/1/waterLevel/rio_tempisque/alerm", "1");
+      console.log("alerta emitida");
+      clientMqtt.publish("alertDisaster/tempisque/Filadelfia/alarm/002/ligth", "1");
     }else{
       console.log("Cliente Mqtt no conectado");
       }

@@ -120,3 +120,6 @@
 2022-07-28T20:31:58.674957176 15814.954980s info: Table e0f7cc97-eab2-4287-98c9-f49992b3a1be: Starting a new Raft election for term 1.
 2022-07-28T20:31:58.675652218 15814.955674s info: Table e0f7cc97-eab2-4287-98c9-f49992b3a1be: Added replica on this server.
 2022-07-28T20:31:58.719526501 15814.999549s info: Table e0f7cc97-eab2-4287-98c9-f49992b3a1be: This server is Raft leader for term 1. Latest log index is 0.
+2022-07-29T01:18:04.332668719 29540.726717s info: Table d280098f-6594-4eb4-909c-3bf2115ec524: Starting a new Raft election for term 1.
+2022-07-29T01:18:04.332942890 29540.726990s info: Table d280098f-6594-4eb4-909c-3bf2115ec524: Added replica on this server.
+2022-07-29T01:18:04.467473820 29540.861522s info: Table d280098f-6594-4eb4-909c-3bf2115ec524: This server is Raft leader for term 1. Latest log index is 0.

@@ -23,6 +23,7 @@
             <div class="col py-2"> 
               <div class="card chart-container">
                 <canvas id="chart"></canvas>
+                <button id=pushAlarm type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span>Disparar Alarma</button>
               </div>
             </div>
               <div class= "col px-2">  
@@ -67,7 +68,7 @@
 
   socket.on("db:update", function(data) {
     console.log("mqttRes", data)
-    if(data.topic.location == "Filadelfia" && data.topic.type_message == "data"){
+    if(data.topic.hot_point == "tempisque" && data.topic.parameter == "waterLevel"){
       if(waterLevelChart.data.labels.length != 15) {
         waterLevelChart.data.labels.push(data.time);  //Add time in x-asix
         waterLevelChart.data.datasets.forEach((dataset) => {
@@ -101,18 +102,28 @@
     }else{console.log("not data")}
   });
 
+  let pushAlarm = document.getElementById("pushAlarm");
+  pushAlarm.addEventListener('click', async() => {
+      socket.emit("push:Alarm");             // Emitimos evento hacia el cliente
+  });
+
   var geoJsonImn_station = <%- JSON.stringify(imn); %>
   var geoJsonDevices = <%- JSON.stringify(devices); %>
-
+  
   var stationIcon = new L.icon({
-    //iconUrl: 'icons8-iot-64.png',
-    iconUrl: 'icons/icons8-tarea-del-sistema-48.png',
+    iconUrl: 'icons/icons8-weather-64.png',
     iconSize:     [20, 20],
     iconAnchor:   [10, 10],
   });
-    
+
   var sensorIcon = new L.icon({
-    iconUrl: 'icons/icons8-iot-64.png',
+    iconUrl: 'icons/icons8-sensor-64.png',
+    iconSize:     [30, 30],
+    iconAnchor:   [15, 15],
+  });
+  
+  var vibrationIcon = new L.icon({
+    iconUrl: 'icons/icons8-avalanche-50.png',
     iconSize:     [30, 30],
     iconAnchor:   [15, 15],
   });
@@ -146,13 +157,19 @@
     opt.innerHTML = device.properties.location;
     selectIoT.appendChild(opt);
 
-    if (device.properties.type_device == "sensor"){
+    if (device.properties.parameter == "waterLevel"){
       marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: sensorIcon}).bindPopup(`
         Localizacion: ${device.properties.location} <br>
         Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
         <a href="${device.properties.url}">Condiciones Actuales</a>
         `).addTo(layerSensors);
-    }else{
+    }else if(device.properties.parameter == "vibration"){
+      marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: vibrationIcon}).bindPopup(`
+        Localizacion: ${device.properties.location} <br>
+        Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
+        <a href="${device.properties.url}">Condiciones Actuales</a>
+        `).addTo(layerSensors);
+    }else if(device.properties.parameter == "sound"){
       marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: alarmIcon}).bindPopup(`
         Localizacion: ${device.properties.location} <br>
         Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
@@ -161,7 +178,7 @@
     }
   }
 
-  for (station of geoJsonImn_station){
+   for (station of geoJsonImn_station){
     marker = new L.marker([station.geometry.coordinates[1], station.geometry.coordinates[0]],{icon: stationIcon}).bindPopup(`
     <h6>Estacion: ${station.properties.name}</h6><br>
     <a href="${station.properties.url}">Condiciones Actuales</a>

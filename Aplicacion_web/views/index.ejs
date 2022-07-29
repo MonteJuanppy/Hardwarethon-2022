@@ -100,14 +100,19 @@
   var geoJsonDevices = <%- JSON.stringify(devices); %>
 
   var stationIcon = new L.icon({
-    //iconUrl: 'icons8-iot-64.png',
-    iconUrl: 'icons/icons8-tarea-del-sistema-48.png',
+    iconUrl: 'icons/icons8-weather-64.png',
     iconSize:     [20, 20],
     iconAnchor:   [10, 10],
   });
-    
+
   var sensorIcon = new L.icon({
-    iconUrl: 'icons/icons8-iot-64.png',
+    iconUrl: 'icons/icons8-sensor-64.png',
+    iconSize:     [30, 30],
+    iconAnchor:   [15, 15],
+  });
+  
+  var vibrationIcon = new L.icon({
+    iconUrl: 'icons/icons8-avalanche-50.png',
     iconSize:     [30, 30],
     iconAnchor:   [15, 15],
   });
@@ -141,13 +146,19 @@
     opt.innerHTML = device.properties.location;
     selectIoT.appendChild(opt);
 
-    if (device.properties.type_device == "sensor"){
+    if (device.properties.parameter == "waterLevel"){
       marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: sensorIcon}).bindPopup(`
         Localizacion: ${device.properties.location} <br>
         Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
         <a href="${device.properties.url}">Condiciones Actuales</a>
         `).addTo(layerSensors);
-    }else{
+    }else if(device.properties.parameter == "vibration"){
+      marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: vibrationIcon}).bindPopup(`
+        Localizacion: ${device.properties.location} <br>
+        Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
+        <a href="${device.properties.url}">Condiciones Actuales</a>
+        `).addTo(layerSensors);
+    }else if(device.properties.parameter == "sound"){
       marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: alarmIcon}).bindPopup(`
         Localizacion: ${device.properties.location} <br>
         Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>

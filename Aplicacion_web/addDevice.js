@@ -89,6 +89,36 @@ let devicesJson = [
     "url": "/tempisque"
     }
   },
+  {
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [-83.973055, 10.147677]
+    },
+  "properties": {
+    "type_device": "sensor",
+    "location": "Braulio Carrillo",
+    "point_id": 7,
+    "parameter": "vibration",
+    "hot_point": "Rio Sucio",
+    "url": "/ruta32"
+    }
+  },
+  {
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [-83.786813, 10.211248]
+    },
+  "properties": {
+    "type_device": "alarm",
+    "location": "Guapiles",
+    "point_id": 8,
+    "parameter": "sound",
+    "hot_point": "Rio Sucio",
+    "url": "/ruta32"
+    }
+  },
 ];
 
 const r = require('rethinkdb');                             //Servicio base datosconst jsonFile = fs.readFileSync("imn_output.json")
