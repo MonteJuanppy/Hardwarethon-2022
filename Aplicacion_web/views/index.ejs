@@ -22,17 +22,13 @@
           <div class = "row">
             <div class="col"> 
               <div id="map"></div>
-             
-              <select name="select-location" id="select-location">
-                <option value="-1">Seleccione Localidad:</option>
-              </select>
-
             </div>
           </div>
-        
           <div class = "row">
             <div class="col py-2"> 
-
+              <select class="form-select form-select-sm" name="select-location" id="select-location" aria-label=".form-select-lg example">
+                <option value="-1">Seleccione su Localidad:</option>
+              </select>
             </div>
             <div class="col py-2"> 
               <div class="card" style="width: 18rem;">
@@ -60,17 +56,19 @@
           </div>
         </div>
       </div>
-    
     </div>
+
     <footer>
       <%- include('partials/footer'); %>
     </footer>
-  </body>
 
 <script src="socket.io/socket.io.js"> </script>
-
 <script>
+// Socket IO para comunicacion con el servidor en tiempo real
   const socket = io();
+////////////////////////////////////////////////////////////////
+
+// Funcionalidad de los botones con socket
   let bottonAlarmI = document.getElementById("alarmI");
   bottonAlarmI.addEventListener('click', async () => {
       const response = await fetch('/dis', {method: 'POST'});
@@ -88,17 +86,36 @@
   pushAlarm.addEventListener('click', async() => {
       socket.emit("push:Alarm");             // Emitimos evento hacia el cliente
     });
-  
+////////////////////////////////////////////////////////////////
+
+// Actualiza el contenido de un boton como ejemplo
   socket.on("alarmI:update", data => {
     bottonAlarmI.textContent = data;
     });
+////////////////////////////////////////////////////////////////////
 
+// Capas base mapas URLs
+  var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+  var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+////////////////////////////////////////////////////////////////////
 
-  ////////////////////////////////////////////////////////////////////
+// Cargamos capas mapas base
+  var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+  var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+  var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  });
+////////////////////////////////////////////////////////////////////
 
-  var geoJsonImn_station = <%- JSON.stringify(imn); %>
-  var geoJsonDevices = <%- JSON.stringify(devices); %>
+// Variables para cargar las capas en variables intermedias para control de capas de forma dinamica
+  var layerSensors = L.layerGroup();
+  var layerAlarms = L.layerGroup();
+  var layerStationImn = L.layerGroup();
+  var layerDistric = L.layerGroup();
+////////////////////////////////////////////////////////////////////
 
+// Iconos personalizados
   var stationIcon = new L.icon({
     iconUrl: 'icons/icons8-weather-64.png',
     iconSize:     [20, 20],
@@ -122,30 +139,28 @@
     iconSize:     [30, 30],
     iconAnchor:   [15, 15],
   });
+////////////////////////////////////////////////////////////////////
 
-  var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
-  var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
-  var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
-  var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
-  var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  });
-  
 
-  var layerSensors = L.layerGroup();
-  var layerAlarms = L.layerGroup();
-  var layerStationImn = L.layerGroup();
-
+// Obtener ID de selector para navegacion entre los diferentes puntos de interes. Abajo se cargaran las distintas opciones
   var selectIoT = document.getElementById('select-location');
-  
+
+// Configurar evento que nos desplaza hasta el punto seleccionado en el mapa
+  document.getElementById('select-location').addEventListener('change',function(ubication){
+    let coords = ubication.target.value.split(",");
+    map.flyTo([coords[1],coords[0]],13);});
+////////////////////////////////////////////////////////////////////
+//Iteramos todos los dispositivos guardados en la base de datos
+  var geoJsonDevices = <%- JSON.stringify(devices); %>    //Cargamos desde la base de datos
+
   for (device of geoJsonDevices){
-    
+
     var opt = document.createElement('option');
     opt.value = device.geometry.coordinates;
     opt.innerHTML = device.properties.location;
-    selectIoT.appendChild(opt);
+    selectIoT.appendChild(opt);               // Se agrega cada locacion al selector
 
+    // Se asigna un icono diferente de acuerdo al tipo de dispositivo cargado
     if (device.properties.parameter == "waterLevel"){
       marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: sensorIcon}).bindPopup(`
         Localizacion: ${device.properties.location} <br>
@@ -165,43 +180,55 @@
         <a href="${device.properties.url}">Condiciones Actuales</a>
         `).addTo(layerAlarms);
     }
-  }
+    ////////////////////////////////////////////////////////////////////
+  } // Fin iteracion de los dispositivos
 
-  for (station of geoJsonImn_station){
+////////////////////////////////////////////////////////////////////
+// Iteramos todas las estaciones IMN guardadas en la base de datos
+  var geoJsonImn_station = <%- JSON.stringify(imn); %>    //Cargamos los puntos 
+
+  for (station of geoJsonImn_station){    // Iteramos cada una de las estaciones automaticas IMN Localizadas
     marker = new L.marker([station.geometry.coordinates[1], station.geometry.coordinates[0]],{icon: stationIcon}).bindPopup(`
     <h6>Estacion: ${station.properties.name}</h6><br>
     <a href="${station.properties.url}">Condiciones Actuales</a>
     `).addTo(layerStationImn)
+  }// Fin de la iteracion de estaciones IMN
+
+//////////////////////////////////////////////////////////////////////
+// Carga de capa GeoJson
+  async function addGeoJson() {
+    const response = await fetch("layers/distritos.geojson");
+    const data = await response.json();
+    L.geoJson(data).addTo(layerDistric);
   }
-  
+  addGeoJson();
+
+//////////////////////////////////////////////////////////////////////
+// Creamos el mapa camvas
   var map = L.map('map', {
     center: [09.92, -84.07],
     zoom: 8,
     layers: [osm, layerSensors],
     });
-  
+
+// Definicos el selector de capas en el mapa
   var baseLayers = {
     'OpenStreetMap': osm,
     'Streets': streets,
     'Satellite': satellite,
-    };
-
+  };
   var overlays = {
     'Monitores Iot': layerSensors,
     'Alarmas Notificadoras': layerAlarms,
     'Estaciones Automaticas IMN': layerStationImn,
-    };
-
+    'Distritos': layerDistric,
+  };
+//////////////////////////////////////////////////////////////////////
+// Cargamos el selector de capas al mapa
   var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
-  
-  document.getElementById('select-location').addEventListener('change',function(e){
-    let coords = e.target.value.split(",");
-    map.flyTo([coords[1],coords[0]],13);});
-    
-    //var map = L.map('map').setView([09.92, -84.07], 8);
-  //var myLayer = L.geoJSON().addTo(map);
-  //myLayer.addData(geoJsonImn_station);
 
+
+// Evento a configurar cuando el servidor lance un emit
   socket.on("map:update", () => {
     var polygon = L.polygon([
       [10.06, -84.01],
@@ -209,18 +236,17 @@
       [10.10, -84.147]
       ]).addTo(map).bindPopup('Zona de Riesgo');
     });
-  
-  var popup = L.popup();
 
+// Funcionalidad cuando hacemos click mostramos las coordenadas en un popup
   function onMapClick(e) {
-    popup
-    .setLatLng(e.latlng)
-    .setContent('Has hecho clip en ' + e.latlng.toString())
-    .openOn(map);
-    console.log(e.latlng)
+    var popup = L.popup();
+    popup.setLatLng(e.latlng).setContent('Has hecho clip en ' + e.latlng.toString()).openOn(map);
     }
 
+//Captura del evento click en el mapa
   map.on('click', onMapClick);
+// Fin del jscript
+</script> 
 
-</script>
+  </body>
 </html>

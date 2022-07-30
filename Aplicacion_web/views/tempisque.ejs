@@ -36,19 +36,22 @@
     <footer>
       <%- include('partials/footer'); %>
     </footer>
-  </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"> </script>
 <script src="socket.io/socket.io.js"> </script>
 
 <script>
+// Cargamos identificador del elemento en pagina para el grafico
   const ctx = document.getElementById("chart").getContext('2d');
-  let colorChart = [
+
+// Variables para establecer los colores del grafico de acuerdo al dato que llega
+  var colorChart = [
     'rgba(161, 198, 247, 1)',
     'rgba(255, 244, 0, 0.85)',
     'rgba(255, 0, 0, 0.9)',
   ]
 
+// Creamos el grafico y le cargamos los ultimos datos que nos regresa la base de datos
   const waterLevelChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -64,16 +67,26 @@
     },
   });
 
+/////////////////////////////////////////////////////////////////////////////////////
+// Socket IO
   const socket = io();
 
+// Creamos un evento de enviar alarma
+  let pushAlarm = document.getElementById("pushAlarm");
+  pushAlarm.addEventListener('click', async() => {
+      socket.emit("push:Alarm");             // Emitimos evento hacia el cliente
+  });
+
+// Actualizamos el grafico en tiempo real son socket IO
   socket.on("db:update", function(data) {
     console.log("mqttRes", data)
-    if(data.topic.hot_point == "tempisque" && data.topic.parameter == "waterLevel"){
+    if(data.topic.hot_point == "tempisque" && data.topic.parameter == "waterLevel"){  // Filtro que los datos sean segun su correspondencia
       if(waterLevelChart.data.labels.length != 15) {
-        waterLevelChart.data.labels.push(data.time);  //Add time in x-asix
+        waterLevelChart.data.labels.push(data.time);  //Agregamos dato eje X
         waterLevelChart.data.datasets.forEach((dataset) => {
-          dataset.data.push(data.data); //Add data in y-axis
-          if (data.data > 15){
+          dataset.data.push(data.data); //Agregar informacion al eje Y
+
+          if (data.data > 15){          //Cambiamos el color del grafico segun el dato entrante
             dataset.backgroundColor = colorChart[2];
           }
           else if(data.data <= 15 && data.data > 10){
@@ -82,13 +95,13 @@
           else{dataset.backgroundColor = colorChart[0];}
         });
       }
-      else {
-        waterLevelChart.data.labels.shift(); //Remove first time data
-        waterLevelChart.data.labels.push(data.time); //Insert latest time data
+      else {                            // En caso que se tengan mas de 15 datos graficados, elimina el ultimo dato
+        waterLevelChart.data.labels.shift(); //Remover el ultimo dato
+        waterLevelChart.data.labels.push(data.time); //Agregamos dato eje X
         waterLevelChart.data.datasets.forEach((dataset) => {
-          dataset.data.shift(); //Remove first temp data
-          dataset.data.push(data.data); //Insert latest temp data
-          if (data.data > 15){
+          dataset.data.shift(); //Removemos ultimo dato
+          dataset.data.push(data.data); //Agregamos dato eje Y
+          if (data.data > 15){          // Colores del grafico
             dataset.backgroundColor = colorChart[2];
           }
           else if(data.data <= 15 && data.data > 10){
@@ -98,18 +111,33 @@
           }
         );
       }
-    waterLevelChart.update(); //Update the graph.
-    }else{console.log("not data")}
+    waterLevelChart.update();         //Actualizamos grafico
+    }else{console.log("not data for this page")}    // Mostramos si el dato recibido no corresponde a la pagina en vista
   });
 
-  let pushAlarm = document.getElementById("pushAlarm");
-  pushAlarm.addEventListener('click', async() => {
-      socket.emit("push:Alarm");             // Emitimos evento hacia el cliente
-  });
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Capas base mapas URLs
+  var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+  var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+////////////////////////////////////////////////////////////////////
 
-  var geoJsonImn_station = <%- JSON.stringify(imn); %>
-  var geoJsonDevices = <%- JSON.stringify(devices); %>
-  
+// Cargamos capas mapas base
+  var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+  var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+  var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  });
+////////////////////////////////////////////////////////////////////
+
+// Variables para cargar las capas en variables intermedias para control de capas de forma dinamica
+  var layerSensors = L.layerGroup();
+  var layerAlarms = L.layerGroup();
+  var layerStationImn = L.layerGroup();
+  var layerDistric = L.layerGroup();
+////////////////////////////////////////////////////////////////////
+
+// Iconos personalizados
   var stationIcon = new L.icon({
     iconUrl: 'icons/icons8-weather-64.png',
     iconSize:     [20, 20],
@@ -133,30 +161,28 @@
     iconSize:     [30, 30],
     iconAnchor:   [15, 15],
   });
+////////////////////////////////////////////////////////////////////
 
-  var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
-  var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
-  var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
-  var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
-  var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  });
-  
 
-  var layerSensors = L.layerGroup();
-  var layerAlarms = L.layerGroup();
-  var layerStationImn = L.layerGroup();
-
+// Obtener ID de selector para navegacion entre los diferentes puntos de interes. Abajo se cargaran las distintas opciones
   var selectIoT = document.getElementById('select-location');
-  
+
+// Configurar evento que nos desplaza hasta el punto seleccionado en el mapa
+  document.getElementById('select-location').addEventListener('change',function(ubication){
+    let coords = ubication.target.value.split(",");
+    map.flyTo([coords[1],coords[0]],13);});
+////////////////////////////////////////////////////////////////////
+//Iteramos todos los dispositivos guardados en la base de datos
+  var geoJsonDevices = <%- JSON.stringify(devices); %>    //Cargamos desde la base de datos
+
   for (device of geoJsonDevices){
-    
+
     var opt = document.createElement('option');
     opt.value = device.geometry.coordinates;
     opt.innerHTML = device.properties.location;
-    selectIoT.appendChild(opt);
+    selectIoT.appendChild(opt);               // Se agrega cada locacion al selector
 
+    // Se asigna un icono diferente de acuerdo al tipo de dispositivo cargado
     if (device.properties.parameter == "waterLevel"){
       marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: sensorIcon}).bindPopup(`
         Localizacion: ${device.properties.location} <br>
@@ -176,50 +202,74 @@
         <a href="${device.properties.url}">Condiciones Actuales</a>
         `).addTo(layerAlarms);
     }
-  }
+    ////////////////////////////////////////////////////////////////////
+  } // Fin iteracion de los dispositivos
 
-   for (station of geoJsonImn_station){
+////////////////////////////////////////////////////////////////////
+// Iteramos todas las estaciones IMN guardadas en la base de datos
+  var geoJsonImn_station = <%- JSON.stringify(imn); %>    //Cargamos los puntos 
+
+  for (station of geoJsonImn_station){    // Iteramos cada una de las estaciones automaticas IMN Localizadas
     marker = new L.marker([station.geometry.coordinates[1], station.geometry.coordinates[0]],{icon: stationIcon}).bindPopup(`
     <h6>Estacion: ${station.properties.name}</h6><br>
     <a href="${station.properties.url}">Condiciones Actuales</a>
     `).addTo(layerStationImn)
+  }// Fin de la iteracion de estaciones IMN
+
+//////////////////////////////////////////////////////////////////////
+// Carga de capa GeoJson
+  async function addGeoJson() {
+    const response = await fetch("layers/distritos.geojson");
+    const data = await response.json();
+    L.geoJson(data).addTo(layerDistric);
   }
-  
+  addGeoJson();
+
+//////////////////////////////////////////////////////////////////////
+// Creamos el mapa camvas
   var map = L.map('local_map', {
     center: [10.400702, -85.538121],
     zoom: 11,
     layers: [osm, layerSensors, layerAlarms],
     });
-  
+
+// Definicos el selector de capas en el mapa
   var baseLayers = {
     'OpenStreetMap': osm,
     'Streets': streets,
     'Satellite': satellite,
-    };
-
+  };
   var overlays = {
     'Monitores Iot': layerSensors,
     'Alarmas Notificadoras': layerAlarms,
     'Estaciones Automaticas IMN': layerStationImn,
-    };
-
+    'Distritos': layerDistric,
+  };
+//////////////////////////////////////////////////////////////////////
+// Cargamos el selector de capas al mapa
   var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
-  
-  document.getElementById('select-location').addEventListener('change',function(e){
-    let coords = e.target.value.split(",");
-    map.flyTo([coords[1],coords[0]],13);});
- 
-  var popup = L.popup();
 
+
+// Evento a configurar cuando el servidor lance un emit
+  socket.on("map:update", () => {
+    var polygon = L.polygon([
+      [10.06, -84.01],
+      [10.18, -84.06],
+      [10.10, -84.147]
+      ]).addTo(map).bindPopup('Zona de Riesgo');
+    });
+
+// Funcionalidad cuando hacemos click mostramos las coordenadas en un popup
   function onMapClick(e) {
-    popup
-    .setLatLng(e.latlng)
-    .setContent('Has hecho clip en ' + e.latlng.toString())
-    .openOn(map);
-    console.log(e.latlng)
+    var popup = L.popup();
+    popup.setLatLng(e.latlng).setContent('Has hecho clip en ' + e.latlng.toString()).openOn(map);
     }
 
+//Captura del evento click en el mapa
   map.on('click', onMapClick);
+// Fin del jscript
 
 </script>
+  </body>
+
 </html>
