@@ -76,8 +76,8 @@ clientMqtt.on('connect', function() {                                           
 
           let dataGraph = {
             "timestamp": new Date(),
-            "time": today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear(),
-            "date": (today.getHours())+":"+(today.getMinutes()+":"+(today.getSeconds())),
+            "date": today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear(),
+            "time": (today.getHours())+":"+(today.getMinutes()+":"+(today.getSeconds())),
             "topic": {
               "hot_point": topicMessage[1],
               "location": topicMessage[2],
@@ -191,6 +191,7 @@ app.get('/tempisque', async (req, res, next) => {                      //Pagina 
     });
 });
 
+
 app.get('/contacts', (req, res) => {              //Pagina Contactos
     res.render('contact',{
     team: team,
@@ -200,9 +201,11 @@ app.get('/contacts', (req, res) => {              //Pagina Contactos
     });
 });
 
-app.get('*', (req, res) => {                      //Pagina de no encontrado
-  res.send('Not Found');
-  res.end();
+  app.get('*', (req, res) => {              //Pagina Contactos
+    res.render('page-error-404',{
+    },(err, html) => {
+      res.send(html);
+    });
 });
 
 app.post('/dis', (req, res) => {  

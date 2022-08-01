@@ -6,38 +6,102 @@
 
     <body>
         <%- include('partials/header'); %>
-
-        <main>
-            <div class="container-fluid">
-                <div class ="row">
-                    <div class ="col-sm-12 col-md-4 col-lg-4 col-xl-4 py-2">
-                        <div class="jumbotron">
-                            <h1>Contacts</h1>
-                            <ul><% team.forEach(function(team) 
-                                { %>
-                                    <li>
-                                    <strong><%= team.name %></strong> representing <%= team.organization %>, born <%= team.birth_year %>
-                                    </li>
-                                <% }); %>
-                             </ul>
-                             <p><%= tagline %></p>
+        <div class="page">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="container-xl">
+                        <div class="row row-deck row-cards" >
+                            <div class ="col-sm-12 col-md-6 col-lg-6 col-xl-6 py-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <img src="logo.gif" class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class ="col-sm-12 col-md-6 col-lg-6 col-xl-6 py-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                        <label class="form-label">Equipo Proyecto</label>
+                                        <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
+                                            <label class="form-selectgroup-item flex-fill">
+                                            <input type="checkbox" name="form-project-manager[]" value="1" class="form-selectgroup-input" >
+                                            <div class="form-selectgroup-label d-flex align-items-center p-3">
+                                                <div class="me-3">
+                                                <span class="form-selectgroup-check"></span>
+                                                </div>
+                                                <div class="form-selectgroup-label-content d-flex align-items-center">
+                                                <span class="avatar me-3" style="background-image: url(./static/avatars/betza.jpeg)"></span>
+                                                <div>
+                                                    <div class="font-weight-medium">Betzabe</div>
+                                                    <div class="text-muted">Telecomunicaciones</div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </label>
+                                            <label class="form-selectgroup-item flex-fill">
+                                            <input type="checkbox" name="form-project-manager[]" value="2" class="form-selectgroup-input"  checked>
+                                            </label>
+                                            <label class="form-selectgroup-item flex-fill">
+                                            <input type="checkbox" name="form-project-manager[]" value="3" class="form-selectgroup-input" >
+                                            <div class="form-selectgroup-label d-flex align-items-center p-3">
+                                                <div class="me-3">
+                                                <span class="form-selectgroup-check"></span>
+                                                </div>
+                                                <div class="form-selectgroup-label-content d-flex align-items-center">
+                                                <span class="avatar me-3" style="background-image: url(./static/avatars/002m.jpg)"></span>
+                                                <div>
+                                                    <div class="font-weight-medium">Daniel</div>
+                                                    <div class="text-muted">Ingieria Electronica</div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </label>
+                                            <label class="form-selectgroup-item flex-fill">
+                                            <input type="checkbox" name="form-project-manager[]" value="4" class="form-selectgroup-input" >
+                                            <div class="form-selectgroup-label d-flex align-items-center p-3">
+                                                <div class="me-3">
+                                                <span class="form-selectgroup-check"></span>
+                                                </div>
+                                                <div class="form-selectgroup-label-content d-flex align-items-center">
+                                                <span class="avatar me-3" style="background-image: url(./static/avatars/juan.jpeg)"></span>
+                                                <div>
+                                                    <div class="font-weight-medium">Juan</div>
+                                                    <div class="text-muted">Ingenieria Electrica</div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </label>
+                                            <label class="form-selectgroup-item flex-fill">
+                                            <input type="checkbox" name="form-project-manager[]" value="5" class="form-selectgroup-input" >
+                                            <div class="form-selectgroup-label d-flex align-items-center p-3">
+                                                <div class="me-3">
+                                                <span class="form-selectgroup-check"></span>
+                                                </div>
+                                                <div class="form-selectgroup-label-content d-flex align-items-center">
+                                                <span class="avatar me-3" style="background-image: url(./static/avatars/pablo.jpeg)"></span>
+                                                <div>
+                                                    <div class="font-weight-medium">Pablo</div>
+                                                    <div class="text-muted">Ingenieria Agronomica</div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </label>
+                                        </div>
+                                        </div>
+                                </div>
+                                </div>
+                            </div>
+                           
                         </div>
-                    </div>
-                    <div class ="col-sm-12 col-md-8 col-lg-8 col-xl-8 py-2">
-                        <img src="logo.gif" class="img-fluid">
-                    </div>
-                </div>
-
-                <div class ="row">
-                    <div class ="col-sm-10 col-md-10 col-lg-10 col-xl-10 py-1">
                     </div>
                 </div>
             </div>
-        </main>
-
-        <footer>
-            <%- include('partials/footer'); %>
-        </footer>
+        </div>
+     
+        <%- include('partials/footer'); %>
+    <script src="./dist/js/tabler.min.js" defer></script>
+    <script src="./dist/js/demo.min.js" defer></script>
     </body>
 </html>
 
