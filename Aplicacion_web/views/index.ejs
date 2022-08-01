@@ -97,6 +97,8 @@
 // Capas base mapas URLs
   var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
   var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+
+  var layerRiosCR = 'https://services5.arcgis.com/4u1m1BBDkNDTVWsd/arcgis/rest/services/Rios_de_Costa_Rica/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson'
 ////////////////////////////////////////////////////////////////////
 
 // Cargamos capas mapas base
@@ -113,6 +115,7 @@
   var layerAlarms = L.layerGroup();
   var layerStationImn = L.layerGroup();
   var layerDistric = L.layerGroup();
+  var layerRiver = L.layerGroup();
 ////////////////////////////////////////////////////////////////////
 
 // Iconos personalizados
@@ -197,11 +200,18 @@
 //////////////////////////////////////////////////////////////////////
 // Carga de capa GeoJson
   async function addGeoJson() {
-    const response = await fetch("layers/distritos.geojson");
-    const data = await response.json();
-    L.geoJson(data).addTo(layerDistric);
+    const distritos = await fetch("layers/distritos.geojson");
+    const dataDistritos = await distritos.json();
+    L.geoJson(dataDistritos).addTo(layerDistric);
   }
   addGeoJson();
+
+  async function addRiver() {
+    const rivers = await fetch(layerRiosCR);
+    const dataRiver = await rivers.json();
+    L.geoJson(dataRiver).addTo(layerRiver);
+      }
+  addRiver();
 
 //////////////////////////////////////////////////////////////////////
 // Creamos el mapa camvas
@@ -221,6 +231,7 @@
     'Monitores Iot': layerSensors,
     'Alarmas Notificadoras': layerAlarms,
     'Estaciones Automaticas IMN': layerStationImn,
+    'Rios CR': layerRiver,
     'Distritos': layerDistric,
   };
 //////////////////////////////////////////////////////////////////////
