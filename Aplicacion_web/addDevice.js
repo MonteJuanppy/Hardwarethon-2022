@@ -8,10 +8,11 @@ let devicesJson = [
   "properties": {
     "type_device": "sensor",
     "location": "Filadelfia",
-    "point_id": 1,
+    "device_id": "001",
     "parameter": "waterLevel",
-    "hot_point": "Rio Tempisque",
-    "url": "/tempisque"
+    "hot_point": "tempisque",
+    "url": "/tempisque",
+    "update": Date("yyyy-MM-dd'T'HH:mm:ssZ"),
     }
   },
   {
@@ -23,10 +24,11 @@ let devicesJson = [
   "properties": {
     "type_device": "alarm",
     "location": "Los Corralillos",
-    "point_id": 2,
+    "device_id": "002",
     "parameter": "sound",
-    "hot_point": "Rio Tempisque",
-    "url": "/tempisque"
+    "hot_point": "tempisque",
+    "url": "/tempisque",
+    "update": Date("yyyy-MM-dd'T'HH:mm:ssZ"),
     }
   },
   {
@@ -38,10 +40,11 @@ let devicesJson = [
   "properties": {
     "type_device": "alarm",
     "location": "La Guinea",
-    "point_id": 3,
+    "device_id": "003",
     "parameter": "sound",
-    "hot_point": "Rio Tempisque",
-    "url": "/tempisque"
+    "hot_point": "tempisque",
+    "url": "/tempisque",
+    "update": Date("yyyy-MM-dd'T'HH:mm:ssZ"),
     }
   },
   {
@@ -53,10 +56,11 @@ let devicesJson = [
   "properties": {
     "type_device": "sensor",
     "location": "Canalete",
-    "point_id": 4,
+    "device_id": "004",
     "parameter": "waterLevel",
-    "hot_point": "Rio Zapote",
-    "url": "/upala"
+    "hot_point": "zapote",
+    "url": "/upala",
+    "update": Date("yyyy-MM-dd'T'HH:mm:ssZ"),
     }
   },
   {
@@ -68,10 +72,11 @@ let devicesJson = [
   "properties": {
     "type_device": "alarm",
     "location": "Upala",
-    "point_id": 5,
+    "device_id": "005",
     "parameter": "sound",
-    "hot_point": "Rio Zapote",
-    "url": "/upala"
+    "hot_point": "zapote",
+    "url": "/upala",
+    "update": Date("yyyy-MM-dd'T'HH:mm:ssZ"),
     }
   },
   {
@@ -83,10 +88,11 @@ let devicesJson = [
   "properties": {
     "type_device": "sensor",
     "location": "Los Ahogados",
-    "point_id": 6,
+    "device_id": "006",
     "parameter": "waterLevel",
-    "hot_point": "Rios Los Ahogados",
-    "url": "/tempisque"
+    "hot_point": "ahogados",
+    "url": "/tempisque",
+     "update": Date("yyyy-MM-dd'T'HH:mm:ssZ"),
     }
   },
   {
@@ -98,10 +104,11 @@ let devicesJson = [
   "properties": {
     "type_device": "sensor",
     "location": "Braulio Carrillo",
-    "point_id": 7,
+    "device_id": "007",
     "parameter": "vibration",
-    "hot_point": "Rio Sucio",
-    "url": "/ruta32"
+    "hot_point": "sucio",
+    "url": "/ruta32",
+    "update": Date("yyyy-MM-dd'T'HH:mm:ssZ"),
     }
   },
   {
@@ -113,10 +120,11 @@ let devicesJson = [
   "properties": {
     "type_device": "alarm",
     "location": "Guapiles",
-    "point_id": 8,
+    "device_id": "008",
     "parameter": "sound",
-    "hot_point": "Rio Sucio",
-    "url": "/ruta32"
+    "hot_point": "sucio",
+    "url": "/ruta32",
+    "update": Date("yyyy-MM-dd'T'HH:mm:ssZ"),
     }
   },
 ];

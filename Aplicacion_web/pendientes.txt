@@ -1,7 +1,6 @@
 Pendientes de trabajar en la plataforma
 
 Indicador de señal recibida en el mapa de los diferentes sensores
-agregar capas de rios del pais
 agregar capa de cuencas
 grafico de niveles proyectados
 

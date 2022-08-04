@@ -26,14 +26,6 @@ let connectionDataBase = null;                                                  
 let socketConnection = null;
 
 //Variables de pruebas
-let team = [
-    { name: 'Betzabe', organization: "Telecomunicaciones", birth_year: 1996},
-    { name: 'Daniel', organization: "electronics", birth_year: 1996},
-    { name: 'Juan', organization: "electrical", birth_year: 1997},
-    { name: 'Marcela', organization: "psychology", birth_year: 1992},
-    { name: 'Pablo', organization: "agronomy", birth_year: 1986}
-    ];
-let tagline = "great team";
 let count = 0;
 
 clientMqtt.on('connect', function() {                                               //Establecer conexion servidor mqtt
@@ -76,8 +68,8 @@ clientMqtt.on('connect', function() {                                           
 
           let dataGraph = {
             "timestamp": new Date(),
-            "date": today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear(),
-            "time": (today.getHours())+":"+(today.getMinutes()+":"+(today.getSeconds())),
+            //"date": today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear(),
+            //"time": (today.getHours())+":"+(today.getMinutes()+":"+(today.getSeconds())),
             "topic": {
               "hot_point": topicMessage[1],
               "location": topicMessage[2],
@@ -88,6 +80,8 @@ clientMqtt.on('connect', function() {                                           
             "data": message.toString(),
             };
 
+          r.table("disaster_monitors").filter({"properties": {"device_id": topicMessage[4]}}).update({"properties": {"update": new Date()}}).run(connectionDataBase, function(err, result) { console.log("error>", err, result) });
+          
           r.table(table_database).insert(         //Almacenamos en dato en la base datos
             dataGraph 
             ).run(connectionDataBase, 
@@ -149,7 +143,7 @@ app.use(express.static(__dirname + '/public'));               //Indicamos direct
 app.get('/', async (req, res, next) => {                      //Pagina Inicio
 
   let imn_stations = await r.table('imn_station').orderBy(r.desc('name')).run(connectionDataBase)
-   .then(cursor => cursor.toArray());
+    .then(cursor => cursor.toArray());
 
   let iot_devices = await r.table('disaster_monitors').orderBy(r.desc('properties.location')).run(connectionDataBase)
    .then(cursor => cursor.toArray());
@@ -177,7 +171,9 @@ app.get('/tempisque', async (req, res, next) => {                      //Pagina 
    .then(cursor => cursor.toArray());
 
   for (let reg of posts){
-    labels.unshift(reg.time);
+    let today = new Date(reg.timestamp);
+    let time = (today.getHours())+":"+(today.getMinutes()+":"+(today.getSeconds()));
+    labels.unshift(time);
     data.unshift(reg.data);
   }
 
@@ -194,8 +190,6 @@ app.get('/tempisque', async (req, res, next) => {                      //Pagina 
 
 app.get('/contacts', (req, res) => {              //Pagina Contactos
     res.render('contact',{
-    team: team,
-    tagline: tagline
     },(err, html) => {
       res.send(html);
     });

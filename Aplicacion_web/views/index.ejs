@@ -176,7 +176,6 @@
     <script src="./dist/js/tabler.min.js" defer></script>
     <script src="./dist/js/demo.min.js" defer></script>
  
-
     <script src="socket.io/socket.io.js"> </script>
 <script>
 // Socket IO para comunicacion con el servidor en tiempo real
@@ -231,9 +230,19 @@
   var layerStationImn = L.layerGroup();
   var layerDistric = L.layerGroup();
   var layerRiver = L.layerGroup();
+  
+  var markers = [];         // Capa de marcas de estado de dispositivos en linea
+  var onoffSensors = false;
 ////////////////////////////////////////////////////////////////////
 
-// Iconos personalizados
+// Creamos el mapa camvas
+var map = L.map('map', {
+    center: [09.92, -84.07],
+    zoom: 8,
+    layers: [streets, layerSensors, layerAlarms],
+    });
+
+    // Iconos personalizados
   var stationIcon = new L.icon({
     iconUrl: 'icons/icons8-weather-64.png',
     iconSize:     [20, 20],
@@ -254,11 +263,22 @@
 
   var alarmIcon = new L.icon({
     iconUrl: 'icons/icons8-button-48.png',
-    iconSize:     [30, 30],
+    iconSize:     [15, 15],
     iconAnchor:   [15, 15],
   });
-////////////////////////////////////////////////////////////////////
 
+  var circleGreen = new L.icon({
+    iconUrl: 'icons/icons8-green-circle-48.png',
+    iconSize:     [12, 12],
+    iconAnchor:   [25, 15],
+  });
+
+  var squareRed = new L.icon({
+    iconUrl: 'icons/icons8-red-square-48.png',
+    iconSize:     [12, 12],
+    iconAnchor:   [25, 15],
+  });
+////////////////////////////////////////////////////////////////////
 
 // Obtener ID de selector para navegacion entre los diferentes puntos de interes. Abajo se cargaran las distintas opciones
   var selectIoT = document.getElementById('select-location');
@@ -285,23 +305,30 @@
         Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
         <a href="${device.properties.url}">Condiciones Actuales</a>
         `).addTo(layerSensors);
+
     }else if(device.properties.parameter == "vibration"){
       marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: vibrationIcon}).bindPopup(`
         Localizacion: ${device.properties.location} <br>
         Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
         <a href="${device.properties.url}">Condiciones Actuales</a>
         `).addTo(layerSensors);
+
     }else if(device.properties.parameter == "sound"){
       marker = new L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: alarmIcon}).bindPopup(`
         Localizacion: ${device.properties.location} <br>
         Tipo de dispositivo: <b>${device.properties.type_device}</b> <br>
         <a href="${device.properties.url}">Condiciones Actuales</a>
         `).addTo(layerAlarms);
+
     }
+
     ////////////////////////////////////////////////////////////////////
   } // Fin iteracion de los dispositivos
 
-////////////////////////////////////////////////////////////////////
+  //Iniciamos Funcion visualizacion de estado en linea de dispositivos
+  visualStateSensor();
+
+  ////////////////////////////////////////////////////////////////////
 // Iteramos todas las estaciones IMN guardadas en la base de datos
   var geoJsonImn_station = <%- JSON.stringify(imn); %>    //Cargamos los puntos 
 
@@ -326,15 +353,9 @@
     const dataRiver = await rivers.json();
     L.geoJson(dataRiver).addTo(layerRiver);
       }
-  addRiver();
+  //addRiver();
 
 //////////////////////////////////////////////////////////////////////
-// Creamos el mapa camvas
-  var map = L.map('map', {
-    center: [09.92, -84.07],
-    zoom: 8,
-    layers: [osm, layerSensors],
-    });
 
 // Definicos el selector de capas en el mapa
   var baseLayers = {
@@ -342,6 +363,7 @@
     'Streets': streets,
     'Satellite': satellite,
   };
+
   var overlays = {
     'Monitores Iot': layerSensors,
     'Alarmas Notificadoras': layerAlarms,
@@ -353,6 +375,33 @@
 // Cargamos el selector de capas al mapa
   var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
 
+  function visualStateSensor(){
+    if (onoffSensors == true){
+      for (sensor of markers){
+        map.removeLayer(sensor)
+        }
+      onoffSensors = false;
+      }
+    else{
+      for (device of geoJsonDevices){
+        var startDate = new Date(device.properties.update);
+        var endDate   = new Date();
+        var seconds = Math.round(((endDate.getTime() - startDate.getTime()) / 1000) / 60);
+      
+        if (seconds > 10){
+          mark = L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: squareRed}).addTo(map);
+          markers.push(mark);
+        }else{
+          mark = L.marker([device.geometry.coordinates[1], device.geometry.coordinates[0]],{icon: circleGreen}).addTo(map);
+          markers.push(mark);
+        }
+      }
+      onoffSensors = true;
+    }
+    setTimeout(() => {
+      visualStateSensor();
+      }, 5000);
+  }
 
 // Evento a configurar cuando el servidor lance un emit
   socket.on("map:update", () => {
@@ -360,8 +409,8 @@
       [10.06, -84.01],
       [10.18, -84.06],
       [10.10, -84.147]
-      ]).addTo(map).bindPopup('Zona de Riesgo');
-    });
+    ]).addTo(map).bindPopup('Zona de Riesgo');
+  });
 
 // Funcionalidad cuando hacemos click mostramos las coordenadas en un popup
   function onMapClick(e) {
