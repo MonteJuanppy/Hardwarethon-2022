@@ -193,3 +193,5 @@
 2022-08-01T17:31:54.852650038 4.605359s info: Table fc37b962-999b-486a-9eb4-9d06caab3aaa: This server is Raft leader for term 6. Latest log index is 18.
 2022-08-03T17:39:08.847752909 33843.031102s warn: RethinkDB has been accessing a lot of swap memory in the past ten minutes. This may impact performace.
 2022-08-04T00:27:11.134399148 34804.853063s warn: RethinkDB has been accessing a lot of swap memory in the past ten minutes. This may impact performace.
+2022-08-04T13:12:07.926366408 48724.893983s warn: RethinkDB has been accessing a lot of swap memory in the past ten minutes. This may impact performace.
+2022-08-06T18:21:54.375698687 115085.078354s warn: RethinkDB has been accessing a lot of swap memory in the past ten minutes. This may impact performace.

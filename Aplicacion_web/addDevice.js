@@ -8,6 +8,7 @@ let devicesJson = [
   "properties": {
     "type_device": "sensor",
     "location": "Filadelfia",
+    "altitude": "30",
     "device_id": "001",
     "parameter": "waterLevel",
     "hot_point": "tempisque",
@@ -24,6 +25,7 @@ let devicesJson = [
   "properties": {
     "type_device": "alarm",
     "location": "Los Corralillos",
+    "altitude": "20",
     "device_id": "002",
     "parameter": "sound",
     "hot_point": "tempisque",
@@ -40,6 +42,7 @@ let devicesJson = [
   "properties": {
     "type_device": "alarm",
     "location": "La Guinea",
+    "altitude": "20",
     "device_id": "003",
     "parameter": "sound",
     "hot_point": "tempisque",
@@ -56,6 +59,7 @@ let devicesJson = [
   "properties": {
     "type_device": "sensor",
     "location": "Canalete",
+    "altitude": "40",
     "device_id": "004",
     "parameter": "waterLevel",
     "hot_point": "zapote",
@@ -72,6 +76,7 @@ let devicesJson = [
   "properties": {
     "type_device": "alarm",
     "location": "Upala",
+    "altitude": "35",
     "device_id": "005",
     "parameter": "sound",
     "hot_point": "zapote",
@@ -88,6 +93,7 @@ let devicesJson = [
   "properties": {
     "type_device": "sensor",
     "location": "Los Ahogados",
+    "altitude": "120",
     "device_id": "006",
     "parameter": "waterLevel",
     "hot_point": "ahogados",
@@ -103,7 +109,8 @@ let devicesJson = [
     },
   "properties": {
     "type_device": "sensor",
-    "location": "Braulio Carrillo",
+    "location": "Braulio_Carrillo",
+    "altitude": "1200",
     "device_id": "007",
     "parameter": "vibration",
     "hot_point": "sucio",
@@ -120,6 +127,7 @@ let devicesJson = [
   "properties": {
     "type_device": "alarm",
     "location": "Guapiles",
+    "altitude": "800",
     "device_id": "008",
     "parameter": "sound",
     "hot_point": "sucio",
@@ -132,8 +140,9 @@ let devicesJson = [
 const r = require('rethinkdb');                             //Servicio base datosconst jsonFile = fs.readFileSync("imn_output.json")
 r.connect({host: 'localhost', port: 28015, db: 'sure_disaster'}).then(conn => {
   console.log("rethinkdb connected");
-
-  r.table('disaster_monitors').insert(devicesJson).run(conn, function(err, result) { console.log("error>", err, result)}); 
+  r.table('disaster_monitors').delete().run(conn, function(err, result) { 
+    r.table('disaster_monitors').insert(devicesJson).run(conn, function(err, result) { console.log("error>", err, result)}); 
+  }); 
   }
 );
 
