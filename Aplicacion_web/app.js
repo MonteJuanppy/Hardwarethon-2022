@@ -12,13 +12,6 @@ const mqtt = require('mqtt');                               //Servicio MQTT
 const r = require('rethinkdb');                             //Servicio base datos
 const server_port = 3000                                    //Puerto del servidor
 
-/*var optionsMqttServer = {                     //Variable con almacena los parametros de conexion del servidor mqtt
-  port: 18709,
-  host: 'mqtt://driver.cloudmqtt.com',
-  username: 'hvdscpnh',
-  password: 'RT0dutQN19lg'
-};*/
-
 var optionsMqttServer = {                     //Variable con almacena los parametros de conexion del servidor mqtt
   port: 1883,
   host: 'fortuitous-actor.cloudmqtt.com',
@@ -29,7 +22,6 @@ var optionsMqttServer = {                     //Variable con almacena los parame
 //const clientMqtt = mqtt.connect('mqtt://test.mosquitto.org')                      //Instancia cliente mqtt
 const clientMqtt = mqtt.connect(optionsMqttServer)   //Instancia cliente mqtt
 let topicDisaster = "hwthon/SAMAN/#";                                              //Topic suscribir 
-let topicDisasterAlarm = "alertDisaster/alarm/";
 let connectionDataBase = null;                                                      // Variable para almacenar la conexion a la base de dato 
 let socketConnection = null;
 
@@ -79,7 +71,9 @@ clientMqtt.on('connect', function() {                                           
             
             let base64Image = message.toString().split(';base64,').pop();
             let today = new Date();
+            
             time = (today.getHours())+"_"+(today.getMinutes()+"_"+(today.getSeconds()))
+            
             let path_imagen = `public/imagen${time}.png`
             fs.writeFile(path_imagen, base64Image, {encoding: 'base64'}, function(err) {
             console.log('File created');
@@ -92,7 +86,7 @@ clientMqtt.on('connect', function() {                                           
                 console.log("socket not set".red);
               }
               
-          });
+            });
           }
                     
           let today = new Date(); 
@@ -112,7 +106,8 @@ clientMqtt.on('connect', function() {                                           
             };
 
           r.table("disaster_monitors").filter({"properties": {"device_id": topicMessage[5]}}).update({"properties": {"update": new Date()}}).run(connectionDataBase, function(err, result) { console.log("error>", err, result) });
-          if (topicMessage[6] != 'setPicture'){
+          
+          if (topicMessage[6] != 'setPicture' && topicMessage[4] != 'alarm'){
             r.table(table_database).insert(         //Almacenamos en dato en la base datos
               dataGraph 
               ).run(connectionDataBase, 
@@ -121,8 +116,9 @@ clientMqtt.on('connect', function() {                                           
                   if (socketConnection != null){
                     socketConnection.emit("db:update", dataGraph);
                   }
-                  else{
-                    console.log("socket not set".red);
+                  else{ 
+                    console.log("socket not set".red);  
+                    
                   }
                 });
             }
@@ -153,32 +149,36 @@ io.on('connection', socket => {                               //Socket IO
     });
    });
 
-  socketConnection.on('push:AlarmI', ()=>{
-    if(clientMqtt.connected == true){
-      console.log("alerta emitida");
-      clientMqtt.publish("hwthon/SAMAN/tempisque/Filadelfia/alarm/002/sound", "1");
-    }else{
-      console.log("Cliente Mqtt no conectado");
-      }
-    });
+    socketConnection.on('push:AlarmI', (data)=>{
+      
+      if(clientMqtt.connected == true){
+        console.log(`alerta emitida ${data}`);
+        clientMqtt.publish("hwthon/SAMAN/tempisque/Filadelfia/alarm/002/sound", data);
+      }else{
+        console.log("Cliente Mqtt no conectado");
+        }
+      });
 
-  socketConnection.on('push:AlarmII', ()=>{
+   /* socketConnection.on('push:AlarmII', (data)=>{
+    console.log(data);
     if(clientMqtt.connected == true){
       console.log("alerta emitida");
       clientMqtt.publish("hwthon/SAMAN/tempisque/Filadelfia/alarm/002/sound", "2");
     }else{
       console.log("Cliente Mqtt no conectado");
-    }
+      }
     });
-      
-  socketConnection.on('push:AlarmIII', ()=>{
-    if(clientMqtt.connected == true){
-      console.log("alerta emitida");
-      clientMqtt.publish("hwthon/SAMAN/tempisque/Filadelfia/alarm/002/sound", "3");
-    }else{
-      console.log("Cliente Mqtt no conectado");
-    }
-  });
+
+    socketConnection.on('push:AlarmIII', (data)=>{
+    console.log(data);
+      if(clientMqtt.connected == true){
+        console.log("alerta emitida");
+        clientMqtt.publish("hwthon/SAMAN/tempisque/Filadelfia/alarm/002/sound", "3");
+      }else{
+        console.log("Cliente Mqtt no conectado");
+        }
+      });
+ */
 
   socketConnection.on('push:updatePicture', ()=>{
     if(clientMqtt.connected == true){

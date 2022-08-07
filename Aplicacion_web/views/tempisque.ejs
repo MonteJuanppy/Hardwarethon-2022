@@ -124,7 +124,7 @@
       // Se agrega segundo dataset al mismo grafico  
         {
           label: 'Nivel Advertencia',
-          data: [20, 20, 20,20,20,20,20,20,20,20,20,20,20,20,],
+          data: [9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, ],
           borderColor: 'rgb(200, 60, 100)', 
           fill: false,
           //backgroundColor: 'rgb(200, 60, 100)',
@@ -142,9 +142,11 @@
   const socket = io();
 
 // Creamos un evento de enviar alarma
+
   let pushAlarmI = document.getElementById("pushAlarmI");
   pushAlarmI.addEventListener('click', async() => {
-      socket.emit("push:AlarmI");             // Emitimos evento hacia el cliente
+
+      socket.emit("push:AlarmI", 25);             // Emitimos evento hacia el cliente
   });
 
   let pushAlarmII = document.getElementById("pushAlarmII");
@@ -168,24 +170,36 @@
     console.log(data);
     console.log("imagen actualizada")
   });
-  
+  var flat_alarm = false;
+
 // Actualizamos el grafico en tiempo real son socket IO
   socket.on("db:update", function(data) {
-    //console.log("mqttRes", data)
+    console.log(data);
+    
+    
+    if(data.topic.hot_point == "sucio" && data.topic.parameter == "vibration" && data.data == 1){
+
+      console.log(`alarma generada vibration ${data.data}`);
+      socket.emit("push:AlarmI", '100');  
+    } // Filtro que los datos sean segun su correspondencia
+      
     let today = new Date(data.timestamp)
     let time = (today.getHours())+":"+(today.getMinutes()+":"+(today.getSeconds()))
 
     if(data.topic.hot_point == "tempisque" && data.topic.parameter == "waterLevel"){  // Filtro que los datos sean segun su correspondencia
+      
+      socket.emit("push:AlarmI", data.data);  
+      
       if(waterLevelChart.data.labels.length <= 15) {
         waterLevelChart.data.labels.push(time);  //Agregamos dato eje X
         
         waterLevelChart.data.datasets[0].data.push(data.data); //Agregamos dato eje Y
-        waterLevelChart.data.datasets[1].data.push(20); //Agregamos dato eje Y
+        waterLevelChart.data.datasets[1].data.push(9.5); //Agregamos dato eje Y
 
-        if (data.data > 15){          //Cambiamos el color del grafico segun el dato entrante
+        if (data.data > 11){          //Cambiamos el color del grafico segun el dato entrante
           waterLevelChart.backgroundColor = colorChart[2];
           }
-        else if(data.data <= 15 && data.data > 10){
+        else if(data.data <= 11 && data.data > 9){
           waterLevelChart.backgroundColor = colorChart[1];
           }
         else{waterLevelChart.backgroundColor = colorChart[0];}
@@ -198,12 +212,12 @@
         waterLevelChart.data.datasets[0].data.shift(); //Removemos ultimo dato
         waterLevelChart.data.datasets[0].data.push(data.data); //Agregamos dato eje Y
         waterLevelChart.data.datasets[1].data.shift(); //Removemos ultimo dato
-        waterLevelChart.data.datasets[1].data.push(20); //Agregamos dato eje Y
+        waterLevelChart.data.datasets[1].data.push(9.5); //Agregamos dato eje Y
 
-        if (data.data > 15){          // Colores del grafico
+        if (data.data > 11){          // Colores del grafico
           waterLevelChart.data.datasets[0].backgroundColor = colorChart[2];
         }
-        else if(data.data <= 15 && data.data > 10){
+        else if(data.data <= 11 && data.data > 9){
           waterLevelChart.data.datasets[0].backgroundColor = colorChart[1];
         }
         else{waterLevelChart.data.datasets[0].backgroundColor = colorChart[0];}

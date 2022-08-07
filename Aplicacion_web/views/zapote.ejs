@@ -41,7 +41,9 @@
                         <div class="card chart-container">
                           <canvas id="chart"></canvas>
                           <div class="card-title">
-                            <button id=pushAlarm type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span>Disparar Alarma</button>
+                            <button id=pushAlarmI type="button" class="btn btn-success"><span class="cil-contrast btn-icon mr-2"></span>Alarma I</button>
+                            <button id=pushAlarmII type="button" class="btn btn-warning"><span class="cil-contrast btn-icon mr-2"></span>Alarma II</button>
+                            <button id=pushAlarmIII type="button" class="btn btn-danger"><span class="cil-contrast btn-icon mr-2"></span>Alarma III</button>
                           </div>
                         </div>
                       </div>
@@ -64,7 +66,14 @@
                 <div class="col-4">
                   <div class="card card-sm">
                     <div class="card-body">
-                      Foto de dispositivo
+                      <div class="row align-items-center">
+                        <div class="card chart-container">
+                          Condiciones actuales
+                          <img id=imagenLocation src="image.png">
+                        <button id=pushUpdatePicture type="button" class="btn btn-success"><span class="cil-contrast btn-icon mr-2"></span>Actualizar Foto</button>
+                        </div>
+
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -127,9 +136,32 @@ const waterLevelChart = new Chart(ctx, {
   const socket = io();
 
 // Creamos un evento de enviar alarma
-  let pushAlarm = document.getElementById("pushAlarm");
-  pushAlarm.addEventListener('click', async() => {
-      socket.emit("push:Alarm");             // Emitimos evento hacia el cliente
+  // Creamos un evento de enviar alarma
+  let pushAlarmI = document.getElementById("pushAlarmI");
+  pushAlarmI.addEventListener('click', async() => {
+      socket.emit("push:AlarmI");             // Emitimos evento hacia el cliente
+  });
+
+  let pushAlarmII = document.getElementById("pushAlarmII");
+  pushAlarmII.addEventListener('click', async() => {
+      socket.emit("push:AlarmII");             // Emitimos evento hacia el cliente
+  });
+
+  let pushAlarmIII = document.getElementById("pushAlarmIII");
+  pushAlarmIII.addEventListener('click', async() => {
+      socket.emit("push:AlarmIII");             // Emitimos evento hacia el cliente
+  });
+
+  let pushUpdatePicture = document.getElementById("pushUpdatePicture");
+  pushUpdatePicture.addEventListener('click', async() => {
+      socket.emit("push:updatePicture");             // Emitimos evento hacia el cliente
+  });
+
+  socket.on("updatePicture", function(data){
+    let imagenID = document.getElementById("imagenLocation");
+    imagenID.setAttribute('src', data);
+    console.log(data);
+    console.log("imagen actualizada")
   });
 
 // Actualizamos el grafico en tiempo real son socket IO
